@@ -50,24 +50,19 @@ export const androidApps = [
     category: "entertainment"
   },
   {
-    icon: "fa-regular fa-calendar-days",
-    name: "Events",
-    category: "events"
-  },
-  {
     icon: "fa-regular fa-money-bill-1",
     name: "Finance",
-    category: "events"
+    category: "finance"
   },
   {
     icon: "fa-solid fa-utensils",
     name: "Food & Drink",
-    category: "events"
+    category: "food-drink"
   },
   {
     icon: "fa-solid fa-heart-pulse",
     name: "Health & Fitness",
-    category: "events"
+    category: "health-fitness"
   },
   {
     icon: "fa-solid fa-house-chimney",
@@ -85,11 +80,6 @@ export const androidApps = [
     category: "lifestyle"
   },
   {
-    icon: "fa-regular fa-map",
-    name: "Maps & Navigation",
-    category: "Maps-navigationnts"
-  },
-  {
     icon: "fa-solid fa-suitcase-medical",
     name: "Medical",
     category: "medical"
@@ -103,11 +93,6 @@ export const androidApps = [
     icon: "fa-regular fa-newspaper",
     name: "News & Magazines",
     category: "news-magazines"
-  },
-  {
-    icon: "fa-solid fa-child-reaching",
-    name: "Parenting",
-    category: "parenting"
   },
   {
     icon: "fa-solid fa-user",
@@ -149,12 +134,6 @@ export const androidApps = [
     name: "Travel & Local",
     category: "travel-local",
   },
-  {
-    icon: "fa-regular fa-file-video",
-    name: "Video Players & Editors",
-    category: "Video-players-editors",
-  },
-
   {
     icon: "fa-regular fa-sun",
     name: "Weather",
@@ -201,11 +180,6 @@ export const androidGames = [
     icon: "fa-regular fa-heart",
     name: "Card",
     category: "card",
-  },
-  {
-    icon: "fa-solid fa-graduation-cap",
-    name: "Educational",
-    category: "educational",
   },
   {
     icon: "fa-solid fa-car",

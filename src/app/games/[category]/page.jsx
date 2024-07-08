@@ -15,3 +15,5 @@ const Page = ({ params: { category } }) => {
 };
 
 export default Page;
+
+

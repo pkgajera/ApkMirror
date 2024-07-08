@@ -8,8 +8,11 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
 import axios from "axios";
+import Versions from "./versions";
+import Image from "next/image";
+import SideBar from "./SideBar";
 
-const AppDetails = ({ appId , name}) => {
+const AppDetails = ({ appId, name, categories }) => {
   const [isLoading, setLoading] = useState(true);
   const [sideappDetails, setSideappDetails] = useState([
     {
@@ -39,6 +42,27 @@ const AppDetails = ({ appId , name}) => {
   ]);
   const [appDetails, setAppDetails] = useState([]);
   const [appVersions, setAppVersions] = useState([]);
+  const [openIndex, setOpenIndex] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(5);
+  const [selectedVersion, setSelectedVersion] = useState({});
+  const [foundCategory, setFoundCategory] = useState(null);
+  const [pageIndex, setPageIndex] = useState(0);
+  const pageCount = 10;
+
+  const toggleDetails = (index) => {
+    setOpenIndex(openIndex === index ? null : index);
+  };
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = appVersions.versions
+    ?.filter((version) => !version.latestVersion)
+    .slice(indexOfFirstItem, indexOfLastItem);
+
+  const pagination = (pageNumber) => {
+    setCurrentPage(pageNumber);
+    setOpenIndex(null);
+  };
   useEffect(() => {
     const getappDetails = async () => {
       try {
@@ -47,6 +71,17 @@ const AppDetails = ({ appId , name}) => {
           setAppDetails(response.data.app.appDetails);
           setAppVersions(response.data.app.appVersions);
           setLoading(false);
+          const latestVersionData = response.data.app.appVersions.versions[1];
+
+          setSelectedVersion(
+            latestVersionData
+              ? latestVersionData
+              : response.data.app.appVersions.versions[0]
+          );
+          const category = categories.find(
+            (item) => item.name === response.data.app.appVersions.category
+          );
+          setFoundCategory(category);
         }
       } catch (errors) {
         console.error(errors);
@@ -54,32 +89,51 @@ const AppDetails = ({ appId , name}) => {
     };
     getappDetails();
   }, []);
-  console.log(appDetails);
-  console.log(appVersions);
-  const [openIndex, setOpenIndex] = useState(null);
   const [showFullDescription, setShowFullDescription] = useState(false);
-
   const toggleDescription = () => {
     setShowFullDescription(!showFullDescription);
   };
 
-  const toggleDetails = (index) => {
-    setOpenIndex(openIndex === index ? null : index);
+  const handleVersionDownload = (version) => {
+    setSelectedVersion(version);
+    setOpenIndex(null);
+  };
+  const formatInstalls = (installs) => {
+    if (installs >= 1000000000) {
+      return Math.floor(installs / 1000000000) + "B+";
+    } else if (installs >= 1000000) {
+      return Math.floor(installs / 1000000) + "M+";
+    } else if (installs >= 1000) {
+      return Math.floor(installs / 1000) + "K+";
+    } else {
+      return installs;
+    }
+  };
+
+  const formatRatingsAndReviews = (ratings) => {
+    if (ratings >= 1000000000) {
+      return (Math.floor(ratings / 10000000) / 100).toFixed(1) + "B+";
+    } else if (ratings >= 1000000) {
+      return (Math.floor(ratings / 10000) / 100).toFixed(1) + "M+";
+    } else if (ratings >= 1000) {
+      return Math.floor(ratings / 1000) + "K+";
+    } else {
+      return ratings;
+    }
   };
   return (
     <>
-     {isLoading ? (
-          <div className="flex items-center justify-center h-screen">
+      {isLoading ? (
+        <div className="flex items-center justify-center h-screen">
           <div className="px-7 py-3 text-lg font-medium leading-none text-center text-dark-800 bg-gray-200 rounded-full animate-pulse dark:bg-blue-900 dark:text-blue-200">
             loading...
           </div>
         </div>
-        ) : (
-      <div className="pt-20 px-4 mx-auto xl:w-1170 lg:w-970">
-       
-          <div className="w-full md:px-3.5 justify-center flex flex-col md:flex-row">
-            <main className="md:w-4/6 px-3.5">
-              <div className="mt-3.5 pl-2.5 min-h-5 bg-white rounded-sm shadow-md">
+      ) : (
+        <div className="pt-20 px-4 mx-5 md:mx-16 lg:mx-16 xl:mx-20 2xl:mx-36">
+          <div className="w-full md:px-3.5 justify-center flex flex-col lg:flex-row">
+            <main className="lg:w-4/6 xl:w-4/6 relative">
+              <div className="mt-3.5 pl-2.5 min-h-5 bg-white rounded-md shadow-md">
                 <div className="mb-1 py-2 px-3.5 text-sm font-normal">
                   <span className="text-black">
                     <Link href="/" className="py-0.5 px-1 hover:bg-neutral-100">
@@ -93,7 +147,10 @@ const AppDetails = ({ appId , name}) => {
                       Android {name}
                     </Link>
                     <span className="py-0.5 px-2 text-slate-500 ">/</span>
-                    <Link href={`/${name}/${appVersions.category}`} className="py-0.5 px-1 hover:bg-neutral-100">
+                    <Link
+                      href={`/${name}/${foundCategory?.category}`}
+                      className="py-0.5 px-1 hover:bg-neutral-100"
+                    >
                       {appVersions.category}
                     </Link>
                     <span className="hidden md:contents py-0.5 px-1 text-slate-500">
@@ -103,8 +160,8 @@ const AppDetails = ({ appId , name}) => {
                   </span>
                 </div>
               </div>
-              <div className="mt-3.5">
-                <div className="px-5 pt-5 bg-white rounded-sm shadow-md">
+              <div className="mt-3.5 ">
+                <div className="px-5 pt-5 bg-white rounded-md shadow-md">
                   <div className="mb-3.5">
                     <h1 className="text-2xl text-center md:text-left">
                       {appDetails.title} APK
@@ -112,95 +169,99 @@ const AppDetails = ({ appId , name}) => {
                   </div>
                   <div className="px-3.5 w-full flex-col md:flex-row flex md:flex-row">
                     <div className=" justify-center items-center mb-3 md:mb-0">
-                      <img
-                        className="w-44 h-44 rounded-3xl"
-                        src={appDetails.icon}
-                        alt={`${appDetails.title} Icon`}
-                      />
+                      <div className="flex justify-center">
+                        <Image
+                          className="rounded-3xl"
+                          src={appDetails.icon}
+                          alt={`${appDetails.title} icon`}
+                          width={176}
+                          height={176}
+                          priority={true}
+                        />
+                      </div>
                       <div className="text-center p-3">
-                      <svg
-                              className="w-4 h-4  text-yellow-300 inline"
-                              aria-hidden="true"
-                              xmlns="http://www.w3.org/2000/svg"
-                              fill="currentColor"
-                              viewBox="0 0 22 20"
-                            >
-                              <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
-                            </svg>
-                            <span>  {appDetails.scoreText} / 5</span>
-                            <p className="text-gray-400">  {appDetails.ratings} Ratings</p>
+                        <svg
+                          className="w-4 h-4 text-yellow-400 inline"
+                          aria-hidden="true"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="currentColor"
+                          viewBox="0 0 22 20"
+                        >
+                          <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                        </svg>
+                        <span> {appDetails.scoreText} / 5</span>
+                        <p className="text-gray-400">
+                          {" "}
+                          {formatRatingsAndReviews(appDetails.ratings)} Ratings
+                        </p>
                       </div>
                     </div>
-                    <div className="md:w-4/6 px-5 ">
-                      <div className="flex">
-                      <div className="w-32 leading-7 text-xs  text-slate-400 md:text-right">
-                                DEVELOPER
+                    <div className="md:w-4/6 pl-5 sm:px-5 ">
+                      <div className=" grid grid-cols-3 md:grid-cols-2 gap-x-10 sm:gap-x-2 truncate">
+                        <div className="leading-7 text-xs text-slate-400 md:text-right">
+                          DEVELOPER
                         </div>
-                        <div className=" md:pl-3 leading-7 truncate">
+                        <div className="md:col-span-1 col-span-2 leading-7 truncate">
                           <Link href="">{appDetails.developer}</Link>
                         </div>
-                      </div>
-                      <div className="flex">
-                        <div className="w-32 leading-7 text-xs  text-slate-400 md:text-right">
+                        <div className=" leading-7 text-xs text-slate-400 md:text-right">
                           CURRENT VERSION
                         </div>
-                        <div className=" md:pl-3 leading-7">
-                          {appVersions.versions[0].versionNumber}
+                        <div className="md:col-span-1 col-span-2 truncate leading-7">
+                          {selectedVersion?.versionNumber}
                         </div>
-                      </div>
-                      <div className="flex">
-                        <div className="w-32 leading-7 text-xs  text-slate-400 md:text-right">
+                        <div className=" leading-7 text-xs text-slate-400 md:text-right">
                           DATE PUBLISHED
                         </div>
-                        <div className=" md:pl-3 leading-7">
-                          {appVersions.versions[0].updated}
+                        <div className="md:col-span-1 col-span-2 leading-7">
+                          {selectedVersion?.updated}
                         </div>
-                      </div>
-                      <div className="flex">
-                        <div className="w-32 leading-7 text-xs  text-slate-400 md:text-right">
+                        <div className=" leading-7 text-xs text-slate-400 md:text-right">
                           FILE SIZE
                         </div>
-                        <div className=" md:pl-3  leading-7">
-                          {appVersions.versions[0].size}
+                        <div className=" md:col-span-1 col-span-2 leading-7">
+                          {selectedVersion?.size}
                         </div>
-                      </div>
-                      <div className="flex">
-                        <div className="w-32 leading-7 text-xs  text-slate-400 md:text-right">
+                        <div className=" leading-7 text-xs text-slate-400 md:text-right">
                           PACKAGE ID
                         </div>
-                        <div className=" md:pl-3 truncate leading-7">
+                        <div className="md:col-span-1 col-span-2 truncate leading-7">
                           {appVersions.appId}
                         </div>
-                      </div>
-                        <div className="flex">
-                        <div className="w-32 leading-7 text-xs  text-slate-400 md:text-right">
+                        <div className=" leading-7 text-xs text-slate-400 md:text-right">
                           DOWNLOADS
                         </div>
-                        <div className=" md:pl-3  leading-7">
-                          {appDetails.maxInstalls}
+                        <div className="md:col-span-1 col-span-2 leading-7">
+                          {formatInstalls(appDetails.maxInstalls)}
                         </div>
-                      </div>
-                      <div className="flex">
-                        <div className="w-32  leading-7 text-xs  text-slate-400 md:text-right">
+
+                        <div className=" leading-7 text-xs text-slate-400 md:text-right">
                           CATEGORY
                         </div>
-                        <div className=" md:pl-3  leading-7">
-                          <Link href="/apps">Android {name}</Link>
+                        <div className="md:col-span-1 col-span-2 leading-7">
+                          <Link href={`/${name}`}>Android {name}</Link>
                         </div>
-                      </div>
-                      <div className="flex">
-                        <div className="w-32  leading-7 text-xs  text-slate-400 md:text-right">
+
+                        <div className=" leading-7 text-xs text-slate-400 md:text-right">
                           GENRE
                         </div>
-                        <div className=" md:pl-3  leading-7">
-                          <Link href="">{appVersions.category}</Link>
+                        <div className=" md:col-span-1 col-span-2 leading-7">
+                          <Link href={`/${name}/${foundCategory?.category}`}>
+                            {appVersions.category}
+                          </Link>
                         </div>
                       </div>
                     </div>
                   </div>
-                  <div className="-mx-5 px-1.5 py-2.5 bg-neutral-100  ">
-                    <div className=" my-3 px-4 flex justify-center">
-                      <Link href='' className="py-3 px-5 bg-slate-600 text-white text-center">
+                  <div className="-mx-5 px-1.5 py-2.5 bg-neutral-100 rounded-b-md">
+                    <div className=" my-3 px-4 flex justify-center ">
+                      <Link
+                        href={`/${name}/appdetails/${appVersions.appId}/${
+                          selectedVersion?.versionNumber.split(" ")[0]
+                        }#download`}
+                        target="_blank"
+                        className="px-6 py-3 bg-slate-900 text-white uppercase rounded-md hover:bg-slate-700"
+                      >
                         <FontAwesomeIcon className="pr-1" icon={faDownload} />
                         DOWNLOAD APK
                       </Link>
@@ -208,101 +269,200 @@ const AppDetails = ({ appId , name}) => {
                   </div>
                 </div>
               </div>
-              <div className="mt-5">
-                <h2 className="mt-7 text-xl font-normal">
-                  <strong>APK</strong> Version History
-                </h2>
-                <div className="mb-5 ">
-                  {appVersions.versions?.map((version, index) => (
-                    <React.Fragment key={index}>
-                      <div
-                        className="mt-2.5 py-4 px-2.5 bg-white shadow-md transition-all ease-in"
-                        onClick={() => toggleDetails(index)}
-                      >
-                        <span className="mt-0.5 mr-2.5 pl-1.5 ">
-                          <FontAwesomeIcon
-                            icon={
-                              openIndex !== index ? faAnglesDown : faAnglesUp
-                            }
-                          />
-                        </span>
-                        <span className="p-1.5 rounded-sm font-bold bg-gray-100">
-                          v{version.versionNumber.split("(")[0]}
-                        </span>
-                        <span className="p-1 float-right rounded px-4 mr-3.5 bg-slate-600 text-white">
-                          VIEW
-                        </span>
-                      </div>
-                      {openIndex === index && (
-                        <div className="p-4 border-t border-gray-300 bg-white shadow-md transition-all duration-900 ease-in-out">
-                          <div className="w-full bg-gray-100 p-2.5 mb-2.5 px-3.5 flex-col md:flex-row flex md:flex-row ">
-                            <div className="md:w-4/6 px-3.5 ">
-                              <div className="flex gap-2 ">
-                                <div className="w-20  leading-7 text-xs   text-slate-400  md:text-right">
-                                  VERSION
-                                </div>
-                                <div className=" md:pl-3 pl-5 leading-7 ">
-                                  <p>{version.versionNumber}</p>
+              {/* <Versions appVersions={appVersions} /> */}
+              {currentItems.length > 0 ? (
+                <div className="mt-5 ">
+                  <h2 className="mt-7 text-xl font-normal">
+                    <strong>APK</strong> Version History
+                  </h2>
+                  <div className="mb-5">
+                    {currentItems?.map((version, index) => (
+                      <React.Fragment key={index}>
+                        <div
+                          className="mt-2.5 py-4 px-2.5 bg-white rounded-md shadow-md transform origin-center transition duration-200 ease-out"
+                          onClick={() => toggleDetails(index)}
+                        >
+                          <span className="mt-0.5 mr-2.5 pl-1.5 ">
+                            <FontAwesomeIcon
+                              icon={
+                                openIndex !== index ? faAnglesDown : faAnglesUp
+                              }
+                            />
+                          </span>
+                          <span className="p-1.5 rounded-md font-bold bg-gray-100">
+                            v{version.versionNumber.split(" ")[0]}
+                          </span>
+                          <button className="p-1 float-right px-4 mr-3.5 bg-slate-900 text-white uppercase rounded-md hover:bg-slate-700">
+                            VIEW
+                          </button>
+                        </div>
+                        {openIndex === index && (
+                          <div className="p-4 border-t rounded-md border-gray-300 bg-white shadow-md transition-all duration-900 ease-in-out">
+                            <div className="w-full bg-gray-100 p-2.5 mb-2.5 px-3.5 flex-col md:flex-row flex md:flex-row transition-all duration-300 ease-in-out">
+                              <div className="md:w-4/6 px-3.5 ">
+                                <div className=" grid grid-cols-3 md:grid-cols-2 sm:gap-x-2 truncate">
+                                  <div className="leading-7 text-xs text-slate-400 md:text-right">
+                                    VERSION
+                                  </div>
+                                  <div className="md:col-span-1 col-span-2 leading-7 truncate">
+                                    <Link href="">{version.versionNumber}</Link>
+                                  </div>
+                                  <div className="leading-7 text-xs text-slate-400 md:text-right">
+                                    SIZE
+                                  </div>
+                                  <div className="md:col-span-1 col-span-2 leading-7 truncate">
+                                    <Link href="">{version.size}</Link>
+                                  </div>
+                                  <div className="leading-7 text-xs text-slate-400 md:text-right">
+                                    RELEASE DATE
+                                  </div>
+                                  <div className="md:col-span-1 col-span-2 leading-7 truncate">
+                                    <Link href="">{version.updated}</Link>
+                                  </div>
+                                  <div className="leading-7 text-xs text-slate-400 md:text-right">
+                                    REQUIREMENT
+                                  </div>
+                                  <div className="md:col-span-1 col-span-2 leading-7 truncate">
+                                    <Link href="">
+                                      {version.minimum.split("(")[0]}
+                                    </Link>
+                                  </div>
                                 </div>
                               </div>
-                              <div className="flex gap-2">
-                                <div className="w-20  leading-7 text-xs   text-slate-400  md:text-right">
-                                  SIZE
-                                </div>
-                                <div className=" md:pl-3 pl-5 leading-7 ">
-                                  <p>{version.size}</p>
-                                </div>
-                              </div>
-                              <div className="flex gap-2">
-                                <div className="  leading-7 text-xs   text-slate-400  md:text-right">
-                                  RELEASE DATE
-                                </div>
-                                <div className=" md:pl-3 pl-5 leading-7 ">
-                                  <p>{version.updated}</p>
-                                </div>
-                              </div>
-                              <div className="flex gap-2">
-                                <div className="w-20  leading-7 text-xs   text-slate-400  md:text-right">
-                                  REQUIREMENT
-                                </div>
-                                <div className=" md:pl-3 pl-5 truncate  leading-7 ">
-                                  <p>{version.minimum.split("(")[0]}</p>
-                                </div>
-                              </div>
-                            </div>
-                            <div className="md:w-4/6 px-3.5 text-center md:mt-10 my-4">
-                              <Link href='' className="py-3 px-5 bg-slate-800 text-white text-center">
-                                <FontAwesomeIcon
-                                  className="pr-1"
-                                  icon={faDownload}
-                                />
-                                DOWNLOAD
-                              </Link>
+                              <button
+                                onClick={() => handleVersionDownload(version)}
+                                className="md:w-4/6 text-center md:mt-10 my-4"
+                              >
+                                <Link
+                                  href={`/apps/appdetails/${
+                                    appVersions.appId
+                                  }#${version.versionNumber.split(" ")[0]}`}
+                                  // target="_blank"
+                                  className="px-6 py-3 bg-slate-900 text-white uppercase rounded-md  hover:bg-slate-700   "
+                                >
+                                  <FontAwesomeIcon
+                                    className="pr-1"
+                                    icon={faDownload}
+                                  />
+                                  DOWNLOAD {version.size}
+                                </Link>
+                              </button>
                             </div>
                           </div>
-                        </div>
+                        )}
+                      </React.Fragment>
+                    ))}
+                  </div>
+                  <div className="flex mt-5 text-xl items-center justify-center bg-white rounded-md shadow-md py-5">
+                    <button
+                      onClick={() => pagination(currentPage - 1)}
+                      disabled={currentPage === 1}
+                      className={`flex-row  items-center justify-center px-3 h-11 leading-tight rounded-s-lg text-gray-500 border border-gray-300 hover:bg-gray-100 ${
+                        currentPage === 1
+                          ? "bg-gray-100 "
+                          : "bg-white hover:text-gray-700"
+                      }`}
+                    > 
+                    {/* <span className="m-5"> */}
+                      Previous
+                      {/* </span> */}
+                    </button>
+                    <div>
+                      {Array.from(
+                        {
+                          length: Math.ceil(
+                            appVersions.versions.filter(
+                              (version) => !version.latestVersion
+                            ).length / itemsPerPage
+                          ),
+                        },
+                        (_, i) => {
+                          const numPages = Math.ceil(
+                            appVersions.versions.filter(
+                              (version) => !version.latestVersion
+                            ).length / itemsPerPage
+                          );
+                          const startPage = Math.max(1, currentPage - 2);
+                          const endPage = Math.min(numPages, currentPage + 2);
+
+                          if (
+                            i === 0 ||
+                            i === numPages - 1 ||
+                            (i + 0 >= startPage && i + 2 <= endPage)
+                          ) {
+                            return (
+                              <button
+                                key={i}
+                                onClick={() => pagination(i + 1)}
+                                disabled={currentPage === i + 1}
+                                className={`flex-row items-center justify-center px-3 h-11 leading-tight text-gray-500 border border-gray-300 hover:bg-gray-100 hover:text-gray-700 ${
+                                  currentPage === i + 1
+                                    ? "bg-gray-100"
+                                    : "bg-white"
+                                }`}
+                              >
+                                {i + 1}
+                              </button>
+                            );
+                          } else if (i === 1 || i === numPages - 2) {
+                            return (
+                              <span className="p-2" key={i}>
+                                ...
+                              </span>
+                            );
+                          }
+                        }
                       )}
-                    </React.Fragment>
-                  ))}
+                    </div>
+
+                    <button
+                      onClick={() => pagination(currentPage + 1)}
+                      disabled={
+                        currentPage ===
+                        Math.ceil(
+                          appVersions.versions.filter(
+                            (version) => !version.latestVersion
+                          ).length / itemsPerPage
+                        )
+                      }
+                      className={`flex-row items-center justify-center px-3 h-11 leading-tight rounded-e-lg text-gray-500  border border-gray-300 hover:bg-gray-100 ${
+                        currentPage ===
+                        Math.ceil(
+                          appVersions.versions.filter(
+                            (version) => !version.latestVersion
+                          ).length / itemsPerPage
+                        )
+                          ? "bg-gray-100 "
+                          : "bg-white hover:text-gray-700"
+                      }`}
+                    >
+                      Next
+                    </button>
+                  </div>
                 </div>
-              </div>
-              <div className="my-5 p-5 bg-white rounded-sm shadow-md">
+              ) : (
+                <h2 className="mt-7 text-xl font-normal">
+                  There is <strong>NO APK</strong> Version History
+                </h2>
+              )}
+
+              <div className="my-5 p-5 bg-white rounded-md  shadow-md">
                 <div className="my-4 max-w-[95vw] mx-auto ">
                   <div className="relative">
-                    <div className="h-1/2 overflow-x-auto whitespace-nowrap w-full flex">
-                      <img
-                        className="object-contain px-2 bg-gray-100"
+                    <div className="h-500 overflow-x-auto whitespace-nowrap w-full flex">
+                      <Image
+                        width={288}
+                        height={0}
+                        className=" object-contain px-2 bg-gray-100"
                         src={appDetails.headerImage}
                         alt={appDetails.title}
                       />
                       {appDetails.video && (
-                        <div className="">
+                        <div className="p-2 rounded-2xl shadow-lg relative mr-2.5 inline-block  contents">
                           <iframe
-                            height="450"
+                            className="object-contain w-72 py-2 bg-gray-100"
                             src={appDetails.video}
                             title="YouTube video"
-                            allowFullScreen
-                            style={{ borderRadius: "1rem" }}
                           />
                         </div>
                       )}
@@ -311,8 +471,10 @@ const AppDetails = ({ appId , name}) => {
                           key={index}
                           className="p-2 rounded-2xl shadow-lg relative mr-2.5 inline-block contents"
                         >
-                          <img
-                            className="px-2 py-1 bg-gray-200"
+                          <Image
+                            width={288}
+                            height={0}
+                            className="px-1 py-1s bg-gray-200"
                             src={url}
                             alt={`Image ${index}`}
                           />
@@ -350,39 +512,16 @@ const AppDetails = ({ appId , name}) => {
                 </div>
               </div>
             </main>
-            <aside className="md:w-2/6 px-3.5  md:mt-0">
-              <div className="my-3.5 p-5 bg-white rounded-sm shadow-md">
-                <h2 className="mb-2.5 font-normal text-slate-500 tracking-wider">
-                  SIMILAR APPS
-                </h2>
-                {sideappDetails?.map((appDetails, index) => (
-                  <Link href='' key={index} className="mt-2.5 p-1.5 ">
-                    <div className="flex ">
-                      <img
-                        className="w-24 h-24 rounded-2xl"
-                        src={appDetails.IMG}
-                        alt={`${appDetails.NAME} Icon`}
-                      />
-                      <div className="ml-2">
-                        <h4 className="text-sm font-medium">
-                          {appDetails.NAME}
-                        </h4>
-                        <p className="text-xs text-slate-400 tracking-wider">
-                          VERSION {appDetails.CURRENT_VERSION}
-                        </p>
-                        <p className="text-xs text-slate-400 uppercase tracking-wider">
-                          {appDetails.DATE_PUBLISHED}
-                        </p>
-                      </div>
-                    </div>
-                  </Link>
-                ))}
-              </div>
+            <aside className=" sm:w-auto lg:w-2/6 lg:px-3.5 ">
+              <SideBar sideappDetails={sideappDetails} header="SIMILAR APPS" />
+              <SideBar
+                sideappDetails={sideappDetails}
+                header="RECENTLY UPDATED APPS"
+              />
             </aside>
           </div>
-       
-      </div>
-       )}
+        </div>
+      )}
     </>
   );
 };

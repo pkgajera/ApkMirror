@@ -2,11 +2,52 @@
 import React, { useEffect, useState } from "react";
 import axios from 'axios';
 import Link from "next/link";
+import Image from "next/image";
+import SideBar from "./SideBar";
 
 const Category = ({ name, category }) => {
   const [categoryApps, setCategoryApps] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const data = [
+    {
+      NAME: "TikTok",
+      IMG: "https://play-lh.googleusercontent.com/BmUViDVOKNJe0GYJe22hsr7juFndRVbvr1fGmHGXqHfJjNAXjd26bfuGRQpVrpJ6YbA",
+      CURRENT_VERSION: "12.2.23",
+      DATE_PUBLISHED: "April 19, 2024",
+    },
+    {
+      NAME: "TikTok",
+      IMG: "https://play-lh.googleusercontent.com/BmUViDVOKNJe0GYJe22hsr7juFndRVbvr1fGmHGXqHfJjNAXjd26bfuGRQpVrpJ6YbA",
+      CURRENT_VERSION: "12.2.23",
+      DATE_PUBLISHED: "April 19, 2024",
+    },
+    {
+      NAME: "TikTok",
+      IMG: "https://play-lh.googleusercontent.com/BmUViDVOKNJe0GYJe22hsr7juFndRVbvr1fGmHGXqHfJjNAXjd26bfuGRQpVrpJ6YbA",
+      CURRENT_VERSION: "12.2.23",
+      DATE_PUBLISHED: "April 19, 2024",
+    },
+    {
+      NAME: "TikTok",
+      IMG: "https://play-lh.googleusercontent.com/BmUViDVOKNJe0GYJe22hsr7juFndRVbvr1fGmHGXqHfJjNAXjd26bfuGRQpVrpJ6YbA",
+      CURRENT_VERSION: "12.2.23",
+      DATE_PUBLISHED: "April 19, 2024",
+    },
+    {
+      NAME: "TikTok",
+      IMG: "https://play-lh.googleusercontent.com/BmUViDVOKNJe0GYJe22hsr7juFndRVbvr1fGmHGXqHfJjNAXjd26bfuGRQpVrpJ6YbA",
+      CURRENT_VERSION: "12.2.23",
+      DATE_PUBLISHED: "April 19, 2024",
+    },
+    {
+      NAME: "TikTok",
+      IMG: "https://play-lh.googleusercontent.com/BmUViDVOKNJe0GYJe22hsr7juFndRVbvr1fGmHGXqHfJjNAXjd26bfuGRQpVrpJ6YbA",
+      CURRENT_VERSION: "12.2.23",
+      DATE_PUBLISHED: "April 19, 2024",
+    },
+  ];
+
 
   useEffect(() => {
       const getData = async () => {
@@ -41,8 +82,10 @@ const Category = ({ name, category }) => {
   }
 
   return (
-    <div className="p-20 mt-5">
-      <div className="lg:w-4/6 xl:w-4/6 lg:mx-20 relative">
+    // <div className="p-20 mt-5 flex">
+    <div className="pt-20 px-4 mx-5 md:mx-16 lg:mx-16 xl:mx-20 2xl:mx-36">
+        <div className="w-full md:px-3.5 justify-center flex flex-col lg:flex-row">
+      <main className="lg:w-4/6 xl:w-4/6 mt-4 relative">
         <div className="mb-3.5 pl-2.5 bg-white rounded-md shadow-md">
           <ul className="flex flex-col md:space-x-6 rtl:space-x-reverse md:flex-row py-2 pr-3.5">
             <li className="block text-black">
@@ -58,7 +101,7 @@ const Category = ({ name, category }) => {
             </li>
           </ul>
         </div>
-        <div className="mb-3.5 p-5 bg-white rounded-sm shadow-md flex flex-col">
+        <div className="mb-3.5 p-5 bg-white rounded-lg shadow-md flex flex-col">
           <h2 className="mb-2.5 text-base font-normal text-slate-500 uppercase tracking-wider">
             {category} ANDROID {name}
           </h2>
@@ -66,12 +109,17 @@ const Category = ({ name, category }) => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
               {categoryApps.map((app) => (
                 <div key={app.appId} className="hover:bg-gray-100 p-1 rounded-md">
-                  <Link href={`/${name}/appdetails/${app.appId}`}>
+                  <Link href={`/${name}/appdetails/${app.appId}` } 
+                  target="_blank"
+                  prefetch={false}
+                  >
                     <div className="flex truncate">
-                      <img
-                        className="w-24 h-24 rounded-2xl"
+                      <Image
+                        className="rounded-2xl"
                         src={app.icon}
                         alt={`${app.title} Icon`}
+                        width={96}
+                        height={96}
                       />
                       <div className="ml-2">
                         <h4 className="text-md font-medium">{app.title}</h4>
@@ -110,8 +158,12 @@ const Category = ({ name, category }) => {
             </div>
           )}
         </div>
-      </div>
-    </div>
+      </main>
+      <aside className=" sm:w-auto lg:w-2/6 lg:px-3.5 ">
+      <SideBar sideappDetails={data} />
+    </aside>
+     </div>
+     </div>
   );
 };
 

@@ -18,7 +18,7 @@ export const GET = async (request, res) => {
         if (!allAppsByCategory || allAppsByCategory.length === 0) {
             return NextResponse.json(
                 { message: "No apps found for the specified category" },
-                { status: 404 }
+                { status: 204 }
             );
         }
 

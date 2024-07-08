@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { androidApps, androidGames } from "./Constant/staticData";
+import Category from "./category";
 
 const Android = ({ name }) => {
 
@@ -15,7 +16,7 @@ const Android = ({ name }) => {
             {categories.map((data, index) => (
             <Link
               key={index}
-              className="max-w-52 max-h-12 p-1 text-sm font-normal relative float-left rounded-sm hover:bg-gray-100"
+              className="max-w-52 max-h-12 p-1 text-sm font-normal relative float-left rounded-md hover:bg-gray-100"
               href={`/${name.toLowerCase()}/${data.category}`}
             >
               <div className="flex items-center">
