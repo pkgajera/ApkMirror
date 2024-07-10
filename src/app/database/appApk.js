@@ -12,10 +12,21 @@ const versionSchema = new Schema({
     updated: { type: String }
 });
 
+const categorySchema = new Schema({
+    name: { type: String, required: true },
+    value: { type: String, required: true }
+});
+
 const appApkSchema = new Schema({
     appId: { type: String, required: true, unique: true },
+    type: { type: String, required: true },
+    // category: { type: categorySchema, required: true },
+    category:{ type: String, required: true },
+    isPopular: { type: Boolean, default: false },
+    recentlyUpdated: { type: Boolean, default: false },
     versions: [versionSchema]
 });
 
 mongoose.models = {};
 export default mongoose.model("AppApk", appApkSchema);
+

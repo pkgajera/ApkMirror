@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { androidApps, androidGames } from "./Constant/staticData";
-import Category from "./category";
 
 const Android = ({ name }) => {
 

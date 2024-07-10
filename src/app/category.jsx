@@ -4,59 +4,23 @@ import axios from 'axios';
 import Link from "next/link";
 import Image from "next/image";
 import SideBar from "./SideBar";
+import LoadingComponent from "./Loading";
 
 const Category = ({ name, category }) => {
   const [categoryApps, setCategoryApps] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [recentlyUpdatedApps, setRecentlyUpdatedApps] = useState([])
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const data = [
-    {
-      NAME: "TikTok",
-      IMG: "https://play-lh.googleusercontent.com/BmUViDVOKNJe0GYJe22hsr7juFndRVbvr1fGmHGXqHfJjNAXjd26bfuGRQpVrpJ6YbA",
-      CURRENT_VERSION: "12.2.23",
-      DATE_PUBLISHED: "April 19, 2024",
-    },
-    {
-      NAME: "TikTok",
-      IMG: "https://play-lh.googleusercontent.com/BmUViDVOKNJe0GYJe22hsr7juFndRVbvr1fGmHGXqHfJjNAXjd26bfuGRQpVrpJ6YbA",
-      CURRENT_VERSION: "12.2.23",
-      DATE_PUBLISHED: "April 19, 2024",
-    },
-    {
-      NAME: "TikTok",
-      IMG: "https://play-lh.googleusercontent.com/BmUViDVOKNJe0GYJe22hsr7juFndRVbvr1fGmHGXqHfJjNAXjd26bfuGRQpVrpJ6YbA",
-      CURRENT_VERSION: "12.2.23",
-      DATE_PUBLISHED: "April 19, 2024",
-    },
-    {
-      NAME: "TikTok",
-      IMG: "https://play-lh.googleusercontent.com/BmUViDVOKNJe0GYJe22hsr7juFndRVbvr1fGmHGXqHfJjNAXjd26bfuGRQpVrpJ6YbA",
-      CURRENT_VERSION: "12.2.23",
-      DATE_PUBLISHED: "April 19, 2024",
-    },
-    {
-      NAME: "TikTok",
-      IMG: "https://play-lh.googleusercontent.com/BmUViDVOKNJe0GYJe22hsr7juFndRVbvr1fGmHGXqHfJjNAXjd26bfuGRQpVrpJ6YbA",
-      CURRENT_VERSION: "12.2.23",
-      DATE_PUBLISHED: "April 19, 2024",
-    },
-    {
-      NAME: "TikTok",
-      IMG: "https://play-lh.googleusercontent.com/BmUViDVOKNJe0GYJe22hsr7juFndRVbvr1fGmHGXqHfJjNAXjd26bfuGRQpVrpJ6YbA",
-      CURRENT_VERSION: "12.2.23",
-      DATE_PUBLISHED: "April 19, 2024",
-    },
-  ];
-
 
   useEffect(() => {
       const getData = async () => {
         try {
-          setLoading(true);
+          setIsLoading(true);
           const parseCategory = encodeURIComponent(category);
           const response = await axios.get(`/api/get_by_category?category=${parseCategory}`);
           if (response && response.status === 200) {
             setCategoryApps(response.data.apps);
+            setRecentlyUpdatedApps(response.data.recentlyUpdatedApps);
           } else {
             setCategoryApps([]);
           }
@@ -64,23 +28,12 @@ const Category = ({ name, category }) => {
           console.error(errors);
           setError("An error occurred while fetching data.");
         } finally {
-          setLoading(false);
+          setIsLoading(false);
         }
       };
     
     getData();
   }, [category]);
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="px-3 py-1 text-lg font-medium leading-none text-center text-dark-800 bg-blue-200 rounded-full animate-pulse dark:bg-blue-900 dark:text-blue-200">
-          Loading...
-        </div>
-      </div>
-    );
-  }
-
   return (
     // <div className="p-20 mt-5 flex">
     <div className="pt-20 px-4 mx-5 md:mx-16 lg:mx-16 xl:mx-20 2xl:mx-36">
@@ -105,7 +58,8 @@ const Category = ({ name, category }) => {
           <h2 className="mb-2.5 text-base font-normal text-slate-500 uppercase tracking-wider">
             {category} ANDROID {name}
           </h2>
-          {categoryApps && categoryApps.length > 0 ? (
+          {isLoading?  <LoadingComponent length={6}/> :  <div>
+           {categoryApps && categoryApps.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
               {categoryApps.map((app) => (
                 <div key={app.appId} className="hover:bg-gray-100 p-1 rounded-md">
@@ -157,10 +111,12 @@ const Category = ({ name, category }) => {
               No data found for this category: {category}
             </div>
           )}
+         </div>}
+         
         </div>
       </main>
       <aside className=" sm:w-auto lg:w-2/6 lg:px-3.5 ">
-      <SideBar sideappDetails={data} />
+      <SideBar sideappDetails={recentlyUpdatedApps} isLoading={isLoading}/>
     </aside>
      </div>
      </div>

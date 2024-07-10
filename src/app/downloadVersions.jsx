@@ -231,66 +231,90 @@ const DownloadVersions = ({ appId, versionId, name }) => {
                     </React.Fragment>
                   ))}
                 </div>
-                <div className="flex mt-5 items-center justify-center">
-                  <button
-                    onClick={() => pagination(currentPage - 1)}
-                    disabled={currentPage === 1}
-                    className={`flex-row items-center justify-center px-3 h-8 leading-tight rounded-s-lg text-gray-500 border-s-0 border border-gray-300 hover:bg-gray-100   ${
-                      currentPage === 1
-                        ? "bg-gray-100 "
-                        : "bg-white hover:text-gray-700"
-                    }`}
-                  >
-                    Previous
-                  </button>
-                  <div>
-                    {Array.from(
-                      {
-                        length: Math.ceil(
+                <div className="flex mt-5 text-xl items-center justify-center bg-white rounded-md shadow-md py-5">
+                    <button
+                      onClick={() => pagination(currentPage - 1)}
+                      disabled={currentPage === 1}
+                      className={`flex-row  items-center justify-center px-3 h-11 leading-tight rounded-s-lg text-gray-500 border border-gray-300 hover:bg-gray-100 ${
+                        currentPage === 1
+                          ? "bg-gray-100 "
+                          : "bg-white hover:text-gray-700"
+                      }`}
+                    > 
+                      Previous
+                    </button>
+                    <div>
+                      {Array.from(
+                        {
+                          length: Math.ceil(
+                            appVersions.versions.filter(
+                              (version) => !version.latestVersion
+                            ).length / itemsPerPage
+                          ),
+                        },
+                        (_, i) => {
+                          const numPages = Math.ceil(
+                            appVersions.versions.filter(
+                              (version) => !version.latestVersion
+                            ).length / itemsPerPage
+                          );
+                          const startPage = Math.max(1, currentPage - 2);
+                          const endPage = Math.min(numPages, currentPage + 2);
+
+                          if (
+                            i === 0 ||
+                            i === numPages - 1 ||
+                            (i + 0 >= startPage && i + 2 <= endPage)
+                          ) {
+                            return (
+                              <button
+                                key={i}
+                                onClick={() => pagination(i + 1)}
+                                disabled={currentPage === i + 1}
+                                className={`flex-row items-center justify-center px-3 h-11 leading-tight text-gray-500 border border-gray-300 hover:bg-gray-100 hover:text-gray-700 ${
+                                  currentPage === i + 1
+                                    ? "bg-gray-100"
+                                    : "bg-white"
+                                }`}
+                              >
+                                {i + 1}
+                              </button>
+                            );
+                          } else if (i === 1 || i === numPages - 2) {
+                            return (
+                              <span className="p-2" key={i}>
+                                ...
+                              </span>
+                            );
+                          }
+                        }
+                      )}
+                    </div>
+
+                    <button
+                      onClick={() => pagination(currentPage + 1)}
+                      disabled={
+                        currentPage ===
+                        Math.ceil(
                           appVersions.versions.filter(
                             (version) => !version.latestVersion
                           ).length / itemsPerPage
-                        ),
-                      },
-
-                      (_, i) => (
-                        <button
-                          key={i}
-                          onClick={() => pagination(i + 1)}
-                          disabled={currentPage === i + 1}
-                          className={`flex-row items-center justify-center px-3 h-8 leading-tight text-gray-500  border border-gray-300 hover:bg-gray-100 hover:text-gray-700  ${
-                            currentPage === i + 1 ? "bg-gray-100" : "bg-white"
-                          }`}
-                        >
-                          {i + 1}
-                        </button>
-                      )
-                    )}
+                        )
+                      }
+                      className={`flex-row items-center justify-center px-3 h-11 leading-tight rounded-e-lg text-gray-500  border border-gray-300 hover:bg-gray-100 ${
+                        currentPage ===
+                        Math.ceil(
+                          appVersions.versions.filter(
+                            (version) => !version.latestVersion
+                          ).length / itemsPerPage
+                        )
+                          ? "bg-gray-100 "
+                          : "bg-white hover:text-gray-700"
+                      }`}
+                    >
+                      Next
+                    </button>
                   </div>
-                  <button
-                    onClick={() => pagination(currentPage + 1)}
-                    disabled={
-                      currentPage ===
-                      Math.ceil(
-                        appVersions.versions.filter(
-                          (version) => !version.latestVersion
-                        ).length / itemsPerPage
-                      )
-                    }
-                    className={`flex-row items-center justify-center px-3 h-8 leading-tight rounded-e-lg text-gray-500 border-e-0 border border-gray-300 hover:bg-gray-100   ${
-                      currentPage ===
-                      Math.ceil(
-                        appVersions.versions.filter(
-                          (version) => !version.latestVersion
-                        ).length / itemsPerPage
-                      )
-                        ? "bg-gray-100 "
-                        : "bg-white hover:text-gray-700"
-                    }`}
-                  >
-                    Next
-                  </button>
-                </div>
               </div>
             )}
           </div>

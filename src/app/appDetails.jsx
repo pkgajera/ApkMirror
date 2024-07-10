@@ -8,47 +8,21 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
 import axios from "axios";
-import Versions from "./versions";
 import Image from "next/image";
 import SideBar from "./SideBar";
+import LoadingComponent from "./Loading";
 
 const AppDetails = ({ appId, name, categories }) => {
   const [isLoading, setLoading] = useState(true);
-  const [sideappDetails, setSideappDetails] = useState([
-    {
-      NAME: "TikTok",
-      IMG: "https://play-lh.googleusercontent.com/BmUViDVOKNJe0GYJe22hsr7juFndRVbvr1fGmHGXqHfJjNAXjd26bfuGRQpVrpJ6YbA",
-      CURRENT_VERSION: "12.2.23",
-      DATE_PUBLISHED: "April 19, 2024",
-    },
-    {
-      NAME: "TikTok",
-      IMG: "https://play-lh.googleusercontent.com/BmUViDVOKNJe0GYJe22hsr7juFndRVbvr1fGmHGXqHfJjNAXjd26bfuGRQpVrpJ6YbA",
-      CURRENT_VERSION: "12.2.23",
-      DATE_PUBLISHED: "April 19, 2024",
-    },
-    {
-      NAME: "TikTok",
-      IMG: "https://play-lh.googleusercontent.com/BmUViDVOKNJe0GYJe22hsr7juFndRVbvr1fGmHGXqHfJjNAXjd26bfuGRQpVrpJ6YbA",
-      CURRENT_VERSION: "12.2.23",
-      DATE_PUBLISHED: "April 19, 2024",
-    },
-    {
-      NAME: "TikTok",
-      IMG: "https://play-lh.googleusercontent.com/BmUViDVOKNJe0GYJe22hsr7juFndRVbvr1fGmHGXqHfJjNAXjd26bfuGRQpVrpJ6YbA",
-      CURRENT_VERSION: "12.2.23",
-      DATE_PUBLISHED: "April 19, 2024",
-    },
-  ]);
+  const [similarApps, setSimilarApps] = useState([]);
   const [appDetails, setAppDetails] = useState([]);
   const [appVersions, setAppVersions] = useState([]);
+  const [recentlyUpdatedApps, setRecentlyUpdatedApps] = useState([]);
   const [openIndex, setOpenIndex] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(5);
   const [selectedVersion, setSelectedVersion] = useState({});
   const [foundCategory, setFoundCategory] = useState(null);
-  const [pageIndex, setPageIndex] = useState(0);
-  const pageCount = 10;
 
   const toggleDetails = (index) => {
     setOpenIndex(openIndex === index ? null : index);
@@ -70,6 +44,8 @@ const AppDetails = ({ appId, name, categories }) => {
         if (response && response.status === 200) {
           setAppDetails(response.data.app.appDetails);
           setAppVersions(response.data.app.appVersions);
+          setRecentlyUpdatedApps(response.data.app.recentlyUpdatedApps);
+          setSimilarApps(response.data.app.similarApps.slice(0, 6));
           setLoading(false);
           const latestVersionData = response.data.app.appVersions.versions[1];
 
@@ -93,7 +69,6 @@ const AppDetails = ({ appId, name, categories }) => {
   const toggleDescription = () => {
     setShowFullDescription(!showFullDescription);
   };
-
   const handleVersionDownload = (version) => {
     setSelectedVersion(version);
     setOpenIndex(null);
@@ -109,7 +84,6 @@ const AppDetails = ({ appId, name, categories }) => {
       return installs;
     }
   };
-
   const formatRatingsAndReviews = (ratings) => {
     if (ratings >= 1000000000) {
       return (Math.floor(ratings / 10000000) / 100).toFixed(1) + "B+";
@@ -362,10 +336,8 @@ const AppDetails = ({ appId, name, categories }) => {
                           ? "bg-gray-100 "
                           : "bg-white hover:text-gray-700"
                       }`}
-                    > 
-                    {/* <span className="m-5"> */}
+                    >
                       Previous
-                      {/* </span> */}
                     </button>
                     <div>
                       {Array.from(
@@ -449,7 +421,7 @@ const AppDetails = ({ appId, name, categories }) => {
               <div className="my-5 p-5 bg-white rounded-md  shadow-md">
                 <div className="my-4 max-w-[95vw] mx-auto ">
                   <div className="relative">
-                    <div className="h-500 overflow-x-auto whitespace-nowrap w-full flex">
+                    <div className="h-500 snap-x overflow-x-auto whitespace-nowrap w-full flex">
                       <Image
                         width={288}
                         height={0}
@@ -474,7 +446,7 @@ const AppDetails = ({ appId, name, categories }) => {
                           <Image
                             width={288}
                             height={0}
-                            className="px-1 py-1s bg-gray-200"
+                            className="px-1 ml-px snap-center object-contain py-1 bg-gray-200"
                             src={url}
                             alt={`Image ${index}`}
                           />
@@ -486,36 +458,48 @@ const AppDetails = ({ appId, name, categories }) => {
                 <div className="-mx-5 px-1.5 py-2.5 bg-neutral-100 text-center font-semibold">
                   <h2>DESCRIPTION</h2>
                 </div>
-                <div className="p-2">
+                <div className="p-2 description-container max-w-full overflow-x-auto">
                   {showFullDescription ? (
-                    <p className="text-justify">{appDetails.description}</p>
+                    <div>
+                      <p className="whitespace-pre-wrap">
+                        {appDetails.description}
+                      </p>
+                      <button
+                        className="mt-2 font-medium text-blue-600 hover:underline dark:text-blue-500"
+                        onClick={() => setShowFullDescription(false)}
+                      >
+                        Hide
+                      </button>
+                    </div>
                   ) : (
-                    <p className="line-clamp-3 text-justify">
-                      {appDetails.description}
-                    </p>
-                  )}
-                  {!showFullDescription ? (
-                    <button
-                      className="bg-none text-blue-500 mt-2"
-                      onClick={toggleDescription}
-                    >
-                      Show More...
-                    </button>
-                  ) : (
-                    <button
-                      className="bg-none text-blue-500 mt-2"
-                      onClick={() => setShowFullDescription(false)}
-                    >
-                      Hide
-                    </button>
+                    <div>
+                      <p className="line-clamp-3 whitespace-pre-wrap">
+                        {appDetails.description}
+                      </p>
+                      <button
+                        className={`mt-2 font-medium ${
+                          appDetails.description.length < 400
+                            ? "text-gray-400 hover:line-through"
+                            : "text-blue-600 hover:underline dark:text-blue-500"
+                        }`}
+                        onClick={toggleDescription}
+                        disabled={appDetails.description.length < 400}
+                      >
+                        Read More...
+                      </button>
+                    </div>
                   )}
                 </div>
               </div>
             </main>
             <aside className=" sm:w-auto lg:w-2/6 lg:px-3.5 ">
-              <SideBar sideappDetails={sideappDetails} header="SIMILAR APPS" />
+              {isLoading ? (
+                <LoadingComponent length={6} />
+              ) : (
+                <SideBar sideappDetails={similarApps} header="SIMILAR APPS" />
+              )}
               <SideBar
-                sideappDetails={sideappDetails}
+                sideappDetails={recentlyUpdatedApps}
                 header="RECENTLY UPDATED APPS"
               />
             </aside>
