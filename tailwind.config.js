@@ -7,17 +7,8 @@ module.exports = {
   ],
   theme: {
     extend: {
-      margin: {
-        '550' : '550px'
-      },
       height:{
-        '75':'75px'
-      },
-      width: {
-        '75':'75px',
-        '1170': '1170px',
-        '970' : '970px',
-        '750' : '750px'
+        '400':'400px'
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",

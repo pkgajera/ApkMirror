@@ -8,7 +8,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
 
-const Versions = ({ appVersions }) => {
+const VersionsComponent = ({ appVersions }) => {
   const [openIndex, setOpenIndex] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(5);
@@ -94,7 +94,7 @@ const Versions = ({ appVersions }) => {
                           version.versionNumber.split(" ")[0]
                         }`}
                         // target="_blank"
-                        // onClick={() => setSelectedVersion(index)}
+                        onClick={() => setSelectedVersion(version)}
                         className="py-3 px-5 bg-slate-800 text-white text-center"
                       >
                         <FontAwesomeIcon className="pr-1" icon={faDownload} />
@@ -161,4 +161,4 @@ const Versions = ({ appVersions }) => {
   );
 };
 
-export default Versions;
+export default VersionsComponent;

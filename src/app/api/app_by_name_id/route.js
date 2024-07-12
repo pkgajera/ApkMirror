@@ -4,7 +4,7 @@ import App from "@/app/database/appData";
 import AppApk from "@/app/database/appApk";
 import connectDB from "@/app/database/mongoose";
 
-export const GET = async (request, res) => {
+export const GET = async (request) => {
   const url = new URL(request.url);
   const appId = url.searchParams.get("appId");
   if (!appId) {
@@ -13,34 +13,22 @@ export const GET = async (request, res) => {
 
   try {
     await connectDB();
-    const appVersions = await AppApk.findOne({ appId });
-    const recentlyUpdated = await AppApk.find({ recentlyUpdated: true}).limit(6).select('appId versions type');
-
+    const appVersions = await getAppVersions(appId);
     if (!appVersions) {
       return NextResponse.json({ message: "App not found" }, { status: 404 });
     }
-    const appDetails = await App.findOne({ appId }).select('title icon developer scoreText ratings maxInstalls screenshots  description headerImage video summary recentChanges');
-    const appDetailsWithVersion = await Promise.all(
-      recentlyUpdated.map(async (appApk) => {
-          const app = await App.findOne({ appId: appApk.appId }).select('title icon developer scoreText');
-          if (app) {
-              const latestVersion = appApk.versions[0];
-              return {
-                  title: app.title,
-                  appId: appApk.appId,
-                  icon: app.icon,
-                  developer: app.developer,
-                  score: app.scoreText,
-                  latestVersion: latestVersion ? latestVersion.versionNumber : null,
-                  updated: latestVersion ? latestVersion.updated : null
-              };
-          }
-          return null;
-      })
-  );
-  const similarApps = await getSimilarApps(appId);
-  const recentlyUpdatedApps = appDetailsWithVersion.filter(app => app !== null);
-    const mergedData = { appVersions, appDetails , recentlyUpdatedApps, similarApps};
+
+    const recentlyUpdatedApps = await getRecentlyUpdatedApps();
+    const appDetails = await getAppDetails(appId);
+    const similarApps = await getSimilarApps(appId);
+
+    const mergedData = {
+      appVersions,
+      appDetails,
+      recentlyUpdatedApps,
+      similarApps,
+    };
+
     return NextResponse.json({ app: mergedData }, { status: 200 });
   } catch (error) {
     return NextResponse.json(
@@ -50,22 +38,61 @@ export const GET = async (request, res) => {
   }
 };
 
-const getSimilarApps = async (appId) => {
-  try {
-    const similarApps = await gplay.similar({ appId, num: 5 });
+const getAppVersions = async (appId) => {
+  const appVersions = await AppApk.findOne({ appId }).select('appId category type versions');
+  if (!appVersions) return null;
 
-    if (Array.isArray(similarApps) && similarApps.length > 0) {
-      return similarApps.map(app => ({
-        appId: app.appId,
+  const versions = appVersions.versions.slice(0,11).map(({ versionNumber, size, minimum, updated, latestVersion }) => ({
+    versionNumber,
+    size,
+    minimum,
+    updated,
+    latestVersion,
+  }));
+
+  return {
+    appId: appVersions.appId,
+    category: appVersions.category,
+    type: appVersions.type,
+    versions,
+  };
+};
+
+const getRecentlyUpdatedApps = async () => {
+  const recentlyUpdated = await AppApk.find({ recentlyUpdated: true }).limit(6).select('appId versions type');
+  const appDetailsWithVersion = await Promise.all(
+    recentlyUpdated.map(async (appApk) => {
+      const app = await App.findOne({ appId: appApk.appId }).select('title icon developer scoreText');
+      if (!app) return null;
+      const latestVersion = appApk.versions[0];
+      return {
+        title: app.title,
+        appId: appApk.appId,
+        icon: app.icon,
         developer: app.developer,
         scoreText: app.scoreText,
-        icon: app.icon,
-        title: app.title,
-      }));
-    } else {
-      console.log("No similar apps found");
-      return [];
-    }
+        latestVersion: latestVersion ? latestVersion.versionNumber : null,
+        updated: latestVersion ? latestVersion.updated : null,
+      };
+    })
+  );
+  return appDetailsWithVersion.filter(app => app !== null);
+};
+
+const getAppDetails = async (appId) => {
+  return App.findOne({ appId }).select('appId title icon developer scoreText ratings maxInstalls screenshots description headerImage video summary recentChanges');
+};
+
+const getSimilarApps = async (appId) => {
+  try {
+    const similarApps = await gplay.similar({ appId });
+    return similarApps.slice(0, 5).map(({ appId, developer, scoreText, icon, title }) => ({
+      appId,
+      developer,
+      scoreText,
+      icon,
+      title,
+    }));
   } catch (error) {
     console.error("Error fetching similar apps:", error);
     return [];

@@ -6,7 +6,7 @@ import React from "react";
 const Page = ({params}) => {
   return (
     <>
-   <AppDetails appId={params.appId} name='apps' categories={androidApps}/>
+   <AppDetails appId={params.appId} name="apps" categories={androidApps}/>
     </>
 
   );

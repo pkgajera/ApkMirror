@@ -5,66 +5,64 @@ import {
   faAnglesDown,
   faAnglesUp,
   faDownload,
+  faAnglesLeft,
+  faAnglesRight,
 } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
-import axios from "axios";
 import Image from "next/image";
 import SideBar from "./SideBar";
-import LoadingComponent from "./Loading";
+import { useDispatch, useSelector } from "react-redux";
+import { getAppDetails } from "./redux/features/appSlice";
 
 const AppDetails = ({ appId, name, categories }) => {
-  const [isLoading, setLoading] = useState(true);
-  const [similarApps, setSimilarApps] = useState([]);
-  const [appDetails, setAppDetails] = useState([]);
-  const [appVersions, setAppVersions] = useState([]);
-  const [recentlyUpdatedApps, setRecentlyUpdatedApps] = useState([]);
   const [openIndex, setOpenIndex] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(5);
   const [selectedVersion, setSelectedVersion] = useState({});
   const [foundCategory, setFoundCategory] = useState(null);
+
+  const dispatch = useDispatch();
+  const appDetails = useSelector(
+    (state) => state.app.appDetail.app?.appDetails
+  );
+  const appVersions = useSelector(
+    (state) => state.app.appDetail.app?.appVersions
+  );
+  const recentlyUpdatedApps = useSelector(
+    (state) => state.app.appDetail.app?.recentlyUpdatedApps
+  );
+  const similarApps = useSelector(
+    (state) => state.app.appDetail.app?.similarApps
+  );
+  useEffect(() => {
+    dispatch(getAppDetails(appId));
+  }, [dispatch, appId]);
+
+  useEffect(() => {
+    const latestVersionData = appVersions?.versions[1];
+    setSelectedVersion(
+      latestVersionData ? latestVersionData : appVersions?.versions[0]
+    );
+    const category = categories.find(
+      (item) => item.name === appVersions?.category
+    );
+    setFoundCategory(category);
+  }, [appVersions]);
+
+  const indexOfLastItem = currentPage * 5;
+  const indexOfFirstItem = indexOfLastItem - 5;
+  const currentItems = appVersions?.versions
+    ?.filter((version) => !version.latestVersion)
+    .slice(indexOfFirstItem, indexOfLastItem);
 
   const toggleDetails = (index) => {
     setOpenIndex(openIndex === index ? null : index);
   };
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = appVersions.versions
-    ?.filter((version) => !version.latestVersion)
-    .slice(indexOfFirstItem, indexOfLastItem);
 
   const pagination = (pageNumber) => {
     setCurrentPage(pageNumber);
     setOpenIndex(null);
   };
-  useEffect(() => {
-    const getappDetails = async () => {
-      try {
-        const response = await axios.get(`/api/app_by_name_id?appId=${appId}`);
-        if (response && response.status === 200) {
-          setAppDetails(response.data.app.appDetails);
-          setAppVersions(response.data.app.appVersions);
-          setRecentlyUpdatedApps(response.data.app.recentlyUpdatedApps);
-          setSimilarApps(response.data.app.similarApps.slice(0, 6));
-          setLoading(false);
-          const latestVersionData = response.data.app.appVersions.versions[1];
 
-          setSelectedVersion(
-            latestVersionData
-              ? latestVersionData
-              : response.data.app.appVersions.versions[0]
-          );
-          const category = categories.find(
-            (item) => item.name === response.data.app.appVersions.category
-          );
-          setFoundCategory(category);
-        }
-      } catch (errors) {
-        console.error(errors);
-      }
-    };
-    getappDetails();
-  }, []);
   const [showFullDescription, setShowFullDescription] = useState(false);
   const toggleDescription = () => {
     setShowFullDescription(!showFullDescription);
@@ -97,26 +95,25 @@ const AppDetails = ({ appId, name, categories }) => {
   };
   return (
     <>
-      {isLoading ? (
-        <div className="flex items-center justify-center h-screen">
-          <div className="px-7 py-3 text-lg font-medium leading-none text-center text-dark-800 bg-gray-200 rounded-full animate-pulse dark:bg-blue-900 dark:text-blue-200">
-            loading...
-          </div>
-        </div>
-      ) : (
+      {appDetails && appVersions ? (
         <div className="pt-20 px-4 mx-5 md:mx-16 lg:mx-16 xl:mx-20 2xl:mx-36">
           <div className="w-full md:px-3.5 justify-center flex flex-col lg:flex-row">
             <main className="lg:w-4/6 xl:w-4/6 relative">
               <div className="mt-3.5 pl-2.5 min-h-5 bg-white rounded-md shadow-md">
                 <div className="mb-1 py-2 px-3.5 text-sm font-normal">
                   <span className="text-black">
-                    <Link href="/" className="py-0.5 px-1 hover:bg-neutral-100">
+                    <Link
+                      href="/"
+                      className="py-0.5 px-1 hover:bg-neutral-100"
+                      prefetch={false}
+                    >
                       Home
                     </Link>
                     <span className="py-0.5 px-2 ">/</span>
                     <Link
                       href={`/${name}`}
-                      className="py-0.5 px-1 capitalize hover:bg-neutral-100"
+                      className="py-0.5 px-1 capitalize hover:bg-neutral-100 "
+                      prefetch={false}
                     >
                       Android {name}
                     </Link>
@@ -124,6 +121,7 @@ const AppDetails = ({ appId, name, categories }) => {
                     <Link
                       href={`/${name}/${foundCategory?.category}`}
                       className="py-0.5 px-1 hover:bg-neutral-100"
+                      prefetch={false}
                     >
                       {appVersions.category}
                     </Link>
@@ -213,14 +211,19 @@ const AppDetails = ({ appId, name, categories }) => {
                           CATEGORY
                         </div>
                         <div className="md:col-span-1 col-span-2 leading-7">
-                          <Link href={`/${name}`}>Android {name}</Link>
+                          <Link href={`/${name}`} prefetch={false}>
+                            Android {name}
+                          </Link>
                         </div>
 
                         <div className=" leading-7 text-xs text-slate-400 md:text-right">
                           GENRE
                         </div>
                         <div className=" md:col-span-1 col-span-2 leading-7">
-                          <Link href={`/${name}/${foundCategory?.category}`}>
+                          <Link
+                            href={`/${name}/${foundCategory?.category}`}
+                            prefetch={false}
+                          >
                             {appVersions.category}
                           </Link>
                         </div>
@@ -228,13 +231,14 @@ const AppDetails = ({ appId, name, categories }) => {
                     </div>
                   </div>
                   <div className="-mx-5 px-1.5 py-2.5 bg-neutral-100 rounded-b-md">
-                    <div className=" my-3 px-4 flex justify-center ">
+                    <div className=" px-4 flex justify-center ">
                       <Link
                         href={`/${name}/appdetails/${appVersions.appId}/${
-                          selectedVersion?.versionNumber.split(" ")[0]
+                          selectedVersion?.versionNumber?.split(" ")[0]
                         }#download`}
-                        target="_blank"
+                        // target="_blank"
                         className="px-6 py-3 bg-slate-900 text-white uppercase rounded-md hover:bg-slate-700"
+                        prefetch={false}
                       >
                         <FontAwesomeIcon className="pr-1" icon={faDownload} />
                         DOWNLOAD APK
@@ -243,8 +247,7 @@ const AppDetails = ({ appId, name, categories }) => {
                   </div>
                 </div>
               </div>
-              {/* <Versions appVersions={appVersions} /> */}
-              {currentItems.length > 0 ? (
+              {currentItems?.length > 0 ? (
                 <div className="mt-5 ">
                   <h2 className="mt-7 text-xl font-normal">
                     <strong>APK</strong> Version History
@@ -313,6 +316,7 @@ const AppDetails = ({ appId, name, categories }) => {
                                   }#${version.versionNumber.split(" ")[0]}`}
                                   // target="_blank"
                                   className="px-6 py-3 bg-slate-900 text-white uppercase rounded-md  hover:bg-slate-700   "
+                                  prefetch={false}
                                 >
                                   <FontAwesomeIcon
                                     className="pr-1"
@@ -327,90 +331,137 @@ const AppDetails = ({ appId, name, categories }) => {
                       </React.Fragment>
                     ))}
                   </div>
-                  <div className="flex mt-5 text-xl items-center justify-center bg-white rounded-md shadow-md py-5">
-                    <button
-                      onClick={() => pagination(currentPage - 1)}
-                      disabled={currentPage === 1}
-                      className={`flex-row  items-center justify-center px-3 h-11 leading-tight rounded-s-lg text-gray-500 border border-gray-300 hover:bg-gray-100 ${
-                        currentPage === 1
-                          ? "bg-gray-100 "
-                          : "bg-white hover:text-gray-700"
-                      }`}
-                    >
-                      Previous
-                    </button>
-                    <div>
-                      {Array.from(
-                        {
-                          length: Math.ceil(
-                            appVersions.versions.filter(
-                              (version) => !version.latestVersion
-                            ).length / itemsPerPage
-                          ),
-                        },
-                        (_, i) => {
-                          const numPages = Math.ceil(
-                            appVersions.versions.filter(
-                              (version) => !version.latestVersion
-                            ).length / itemsPerPage
-                          );
-                          const startPage = Math.max(1, currentPage - 2);
-                          const endPage = Math.min(numPages, currentPage + 2);
-
-                          if (
-                            i === 0 ||
-                            i === numPages - 1 ||
-                            (i + 0 >= startPage && i + 2 <= endPage)
-                          ) {
-                            return (
-                              <button
-                                key={i}
-                                onClick={() => pagination(i + 1)}
-                                disabled={currentPage === i + 1}
-                                className={`flex-row items-center justify-center px-3 h-11 leading-tight text-gray-500 border border-gray-300 hover:bg-gray-100 hover:text-gray-700 ${
-                                  currentPage === i + 1
-                                    ? "bg-gray-100"
-                                    : "bg-white"
-                                }`}
-                              >
-                                {i + 1}
-                              </button>
-                            );
-                          } else if (i === 1 || i === numPages - 2) {
-                            return (
-                              <span className="p-2" key={i}>
-                                ...
-                              </span>
-                            );
-                          }
-                        }
-                      )}
+                  <div className="flex justify-between text-xl items-center ">
+                    <div className="px-5">
+                      Page{" "}
+                      <span className="underline">
+                        {" "}
+                        {currentPage === 1 ? 1 : 2}
+                      </span>{" "}
+                      Out Of <span className="underline">{2}</span>
                     </div>
-
-                    <button
-                      onClick={() => pagination(currentPage + 1)}
-                      disabled={
-                        currentPage ===
-                        Math.ceil(
-                          appVersions.versions.filter(
-                            (version) => !version.latestVersion
-                          ).length / itemsPerPage
-                        )
-                      }
-                      className={`flex-row items-center justify-center px-3 h-11 leading-tight rounded-e-lg text-gray-500  border border-gray-300 hover:bg-gray-100 ${
-                        currentPage ===
-                        Math.ceil(
-                          appVersions.versions.filter(
-                            (version) => !version.latestVersion
-                          ).length / itemsPerPage
-                        )
-                          ? "bg-gray-100 "
-                          : "bg-white hover:text-gray-700"
-                      }`}
-                    >
-                      Next
-                    </button>
+                    <div className="px-5">
+                      <button
+                        onClick={() => pagination(currentPage - 1)}
+                        disabled={currentPage === 1}
+                        className={`flex-row  items-center justify-center px-5 mx-2 h-11 leading-tight rounded-s-lg text-gray-500 border border-gray-300 hover:bg-gray-100 ${
+                          currentPage === 1
+                            ? "bg-gray-100 "
+                            : "bg-white hover:text-gray-700"
+                        }`}
+                      >
+                        <FontAwesomeIcon icon={faAnglesLeft} />
+                      </button>
+                      <button
+                        onClick={() => pagination(currentPage + 1)}
+                        disabled={
+                          currentPage ===
+                          Math.ceil(
+                            appVersions.versions.filter(
+                              (version) => !version.latestVersion
+                            ).length / 5
+                          )
+                        }
+                        className={`flex-row items-center justify-center px-5 h-11 leading-tight rounded-e-lg text-gray-500  border border-gray-300 hover:bg-gray-100 ${
+                          currentPage ===
+                          Math.ceil(
+                            appVersions.versions.filter(
+                              (version) => !version.latestVersion
+                            ).length / 5
+                          )
+                            ? "bg-gray-100 "
+                            : "bg-white hover:text-gray-700"
+                        }`}
+                      >
+                        <FontAwesomeIcon icon={faAnglesRight} />
+                      </button>
+                    </div>
                   </div>
+
+                  {/* <div className="flex mt-5 text-xl items-center justify-center bg-white rounded-md shadow-md py-5">
+                  <button
+                    onClick={() => pagination(currentPage - 1)}
+                    disabled={currentPage === 1}
+                    className={`flex-row  items-center justify-center px-3 h-11 leading-tight rounded-s-lg text-gray-500 border border-gray-300 hover:bg-gray-100 ${
+                      currentPage === 1
+                        ? "bg-gray-100 "
+                        : "bg-white hover:text-gray-700"
+                    }`}
+                  >
+                    Previous
+                  </button>
+                  <div>
+                    {Array.from(
+                      {
+                        length: Math.ceil(
+                          appVersions.versions.filter(
+                            (version) => !version.latestVersion
+                          ).length / 5
+                        ),
+                      },
+                      (_, i) => {
+                        const numPages = Math.ceil(
+                          appVersions.versions.filter(
+                            (version) => !version.latestVersion
+                          ).length / 5
+                        );
+                        const startPage = Math.max(1, currentPage - 2);
+                        const endPage = Math.min(numPages, currentPage + 2);
+
+                        if (
+                          i === 0 ||
+                          i === numPages - 1 ||
+                          (i + 0 >= startPage && i + 2 <= endPage)
+                        ) {
+                          return (
+                            <button
+                              key={i}
+                              onClick={() => pagination(i + 1)}
+                              disabled={currentPage === i + 1}
+                              className={`flex-row items-center justify-center px-3 h-11 leading-tight text-gray-500 border border-gray-300 hover:bg-gray-100 hover:text-gray-700 ${
+                                currentPage === i + 1
+                                  ? "bg-gray-100"
+                                  : "bg-white"
+                              }`}
+                            >
+                              {i + 1}
+                            </button>
+                          );
+                        } else if (i === 1 || i === numPages - 2) {
+                          return (
+                            <span className="p-2" key={i}>
+                              ...
+                            </span>
+                          );
+                        }
+                      }
+                    )}
+                  </div>
+
+                  <button
+                    onClick={() => pagination(currentPage + 1)}
+                    disabled={
+                      currentPage ===
+                      Math.ceil(
+                        appVersions.versions.filter(
+                          (version) => !version.latestVersion
+                        ).length / 5
+                      )
+                    }
+                    className={`flex-row items-center justify-center px-3 h-11 leading-tight rounded-e-lg text-gray-500  border border-gray-300 hover:bg-gray-100 ${
+                      currentPage ===
+                      Math.ceil(
+                        appVersions.versions.filter(
+                          (version) => !version.latestVersion
+                        ).length / 5
+                      )
+                        ? "bg-gray-100 "
+                        : "bg-white hover:text-gray-700"
+                    }`}
+                  >
+                    Next
+                  </button>
+                </div> */}
                 </div>
               ) : (
                 <h2 className="mt-7 text-xl font-normal">
@@ -427,7 +478,7 @@ const AppDetails = ({ appId, name, categories }) => {
                         height={0}
                         className=" object-contain px-2 bg-gray-100"
                         src={appDetails.headerImage}
-                        alt={appDetails.title}
+                        alt={`${appDetails.title}`}
                       />
                       {appDetails.video && (
                         <div className="p-2 rounded-2xl shadow-lg relative mr-2.5 inline-block  contents">
@@ -458,9 +509,9 @@ const AppDetails = ({ appId, name, categories }) => {
                 <div className="-mx-5 px-1.5 py-2.5 bg-neutral-100 text-center font-semibold">
                   <h2>DESCRIPTION</h2>
                 </div>
-                <div className="p-2 description-container max-w-full overflow-x-auto">
+                <div className="p-2 description-container max-w-full overflow-x-auto ">
                   {showFullDescription ? (
-                    <div>
+                    <div className="max-h-full transition-all duration-500 ease-in-out">
                       <p className="whitespace-pre-wrap">
                         {appDetails.description}
                       </p>
@@ -478,12 +529,12 @@ const AppDetails = ({ appId, name, categories }) => {
                       </p>
                       <button
                         className={`mt-2 font-medium ${
-                          appDetails.description.length < 400
+                          appDetails.description?.length < 400
                             ? "text-gray-400 hover:line-through"
                             : "text-blue-600 hover:underline dark:text-blue-500"
                         }`}
                         onClick={toggleDescription}
-                        disabled={appDetails.description.length < 400}
+                        disabled={appDetails.description?.length < 400}
                       >
                         Read More...
                       </button>
@@ -493,16 +544,18 @@ const AppDetails = ({ appId, name, categories }) => {
               </div>
             </main>
             <aside className=" sm:w-auto lg:w-2/6 lg:px-3.5 ">
-              {isLoading ? (
-                <LoadingComponent length={6} />
-              ) : (
-                <SideBar sideappDetails={similarApps} header="SIMILAR APPS" />
-              )}
+              <SideBar sideappDetails={similarApps} header="SIMILAR APPS" />
               <SideBar
                 sideappDetails={recentlyUpdatedApps}
                 header="RECENTLY UPDATED APPS"
               />
             </aside>
+          </div>
+        </div>
+      ) : (
+        <div className="flex items-center justify-center h-screen">
+          <div className="px-7 py-3 text-lg font-medium leading-none text-center text-dark-800 bg-gray-200 rounded-full animate-pulse dark:bg-blue-900 dark:text-blue-200">
+            loading...
           </div>
         </div>
       )}

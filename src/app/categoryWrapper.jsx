@@ -17,6 +17,7 @@ const Android = ({ name }) => {
               key={index}
               className="max-w-52 max-h-12 p-1 text-sm font-normal relative float-left rounded-md hover:bg-gray-100"
               href={`/${name.toLowerCase()}/${data.category}`}
+              prefetch={false}
             >
               <div className="flex items-center">
                 <span className="text-lg m-1 w-7 h-7 inline-block leading-7 text-center">
