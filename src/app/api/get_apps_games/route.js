@@ -26,7 +26,7 @@ export const GET = async (request, res) => {
           appId: appApk.appId,
           icon: app.icon,
           developer: app.developer,
-          score: app.scoreText,
+          scoreText: app.scoreText,
           latestVersion: latestVersion ? latestVersion.versionNumber : null,
           updated: latestVersion ? latestVersion.updated : null
         };
