@@ -36,6 +36,7 @@ const Category = ({ name, category }) => {
   }, [category]);
   return (
     // <div className="p-20 mt-5 flex">
+    <>
     <div className="pt-20 px-4 mx-5 md:mx-16 lg:mx-16 xl:mx-20 2xl:mx-36">
         <div className="w-full md:px-3.5 justify-center flex flex-col lg:flex-row">
       <main className="lg:w-4/6 xl:w-4/6 mt-4 relative">
@@ -120,6 +121,7 @@ const Category = ({ name, category }) => {
     </aside>
      </div>
      </div>
+     </>
   );
 };
 

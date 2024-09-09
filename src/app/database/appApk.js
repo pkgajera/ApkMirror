@@ -24,6 +24,7 @@ const appApkSchema = new Schema({
     category:{ type: String, required: true },
     isPopular: { type: Boolean, default: false },
     recentlyUpdated: { type: Boolean, default: false },
+    isSimilar: { type: Boolean, default: false },
     versions: [versionSchema]
 });
 

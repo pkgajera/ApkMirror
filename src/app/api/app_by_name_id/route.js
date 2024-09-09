@@ -15,12 +15,12 @@ export const GET = async (request) => {
     await connectDB();
     const appVersions = await getAppVersions(appId);
     if (!appVersions) {
-      return NextResponse.json({ message: "App not found" }, { status: 404 });
+      return NextResponse.json({ message: "App not found" }, { status: 400 });
     }
 
     const recentlyUpdatedApps = await getRecentlyUpdatedApps();
     const appDetails = await getAppDetails(appId);
-    const similarApps = await getSimilarApps(appId);
+    const similarApps = await getSimilarApps();
 
     const mergedData = {
       appVersions,
@@ -83,16 +83,34 @@ const getAppDetails = async (appId) => {
   return App.findOne({ appId }).select('appId title icon developer scoreText ratings maxInstalls screenshots description headerImage video summary recentChanges');
 };
 
-const getSimilarApps = async (appId) => {
+const getSimilarApps = async () => {
   try {
-    const similarApps = await gplay.similar({ appId });
-    return similarApps.slice(0, 5).map(({ appId, developer, scoreText, icon, title }) => ({
-      appId,
-      developer,
-      scoreText,
-      icon,
-      title,
-    }));
+    const similarApps = await AppApk.find({ isSimilar: true }).limit(15).select('appId versions type');
+    const appDetailsWithVersion = await Promise.all(
+      similarApps.map(async (appApk) => {
+        const app = await App.findOne({ appId: appApk.appId }).select('title icon developer scoreText');
+        if (!app) return null;
+        const latestVersion = appApk.versions[0];
+        return {
+          title: app.title,
+          appId: appApk.appId,
+          icon: app.icon,
+          developer: app.developer,
+          scoreText: app.scoreText,
+          latestVersion: latestVersion ? latestVersion.versionNumber : null,
+          updated: latestVersion ? latestVersion.updated : null,
+        };
+      })
+    );
+    return appDetailsWithVersion.filter(app => app !== null);
+    // const similarApps = await gplay.similar({ appId });
+    // return similarApps.slice(0, 5).map(({ appId, developer, scoreText, icon, title }) => ({
+    //   appId,
+    //   developer,
+    //   scoreText,
+    //   icon,
+    //   title,
+    // }));
   } catch (error) {
     console.error("Error fetching similar apps:", error);
     return [];

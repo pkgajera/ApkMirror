@@ -5,6 +5,7 @@ import Android from "./categoryWrapper";
 import Image from "next/image";
 import axios from "axios";
 import LoadingComponent from "./Loading";
+import Head from "next/head";
 
 export default function Home() {
   const [value, setValue] = useState('')
@@ -29,7 +30,8 @@ export default function Home() {
     getPopulars();
   }, []);
   return (
-    <main className="flex min-h-screen flex-col  items-center justify-between p-10 md:p-28">
+    <>  
+      <main className="flex min-h-screen flex-col  items-center justify-between p-10 md:p-28">
       <div className="container mx-auto">
         <div className="col-md-12 flex items-center flex-col mb-8">
           <h1 className="text-2xl md:text-4xl font-bold mb-2 md:mb-6 text-center">
@@ -195,5 +197,7 @@ export default function Home() {
         </div>
       </div>
     </main>
+    </>
+
   );
 }

@@ -3,12 +3,14 @@ import axios from "axios";
 
 export const getAppDetails = createAsyncThunk(
   "app/getAppDetails",
-  async (appId) => {
+  async (appId,{ rejectWithValue }) => {
     try {
       const response = await axios.get(`/api/app_by_name_id?appId=${appId}`);
-      return response.data;
+      if(response && response.status ===200){
+       return response.data;
+      }
     } catch (error) {
-      throw error;
+      return rejectWithValue("App Version not available");
     }
   }
 );
