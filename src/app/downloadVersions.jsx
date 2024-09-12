@@ -6,9 +6,10 @@ import {
   faAnglesUp,
   faDownload,
 } from "@fortawesome/free-solid-svg-icons";
+import axios from "axios";
 import Link from "next/link";
 import { useSelector } from "react-redux";
-import Versions from "../versions";
+import Versions from "./versions";
 
 const DownloadVersions = ({ appId, versionNumber, name }) => {
 
@@ -60,9 +61,6 @@ const DownloadVersions = ({ appId, versionNumber, name }) => {
   };
   return (
     <>
-    <metadata>
-    <title>{`${appDetails.title}/Download`}</title>
-    </metadata>
       {appDetails && appVersions ? (
         <main className="flex min-h-screen flex-col items-center justify-between py-28 px-5 lg:px-40 xl:px-52 2xl:px-72">
         <div className="container max-w-screen-xl mx-auto">

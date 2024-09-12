@@ -20,7 +20,7 @@ const Navbar = () => {
   //   setSearchTerm(e.target.value);
   // };
   return (
-    <header className="fixed top-0 left-0 right-0 z-10 bg-white shadow">
+    <header className="sticky top-0 left-0 right-0 z-10 bg-white shadow">
       <nav className="bg-white border-gray-200 dark:bg-gray-900">
         <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
           <Link

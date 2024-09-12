@@ -32,7 +32,8 @@ const Games = () => {
   }, []);
   return (
     <>
-      <div className="pt-20 px-4 mx-5 md:mx-16 lg:mx-16 xl:mx-20 2xl:mx-36">
+    <main className="flex min-h-screen flex-col  items-center justify-between p-10 md:p-28">
+            <div className="container mx-auto max-w-screen-xl">
         <div className="w-full md:px-3.5 justify-center flex flex-col lg:flex-row">
           <main className="lg:w-4/6 xl:w-4/6 mt-4 relative">
             <div className="mb-3.5 pl-2.5 bg-white rounded-md shadow-md">
@@ -108,6 +109,7 @@ const Games = () => {
           </aside>
         </div>
       </div>
+    </main>
     </>
   );
 };

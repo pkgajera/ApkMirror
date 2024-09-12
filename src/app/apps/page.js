@@ -32,8 +32,9 @@ const Apps = () => {
   }, []);
   return (
     <>
-      <div className="pt-20 px-4 mx-5 md:mx-16 lg:mx-16 xl:mx-20 2xl:mx-36">
-        <div className="w-full md:px-3.5 justify-center flex flex-col lg:flex-row">
+      <main className="flex min-h-screen flex-col items-center justify-between py-28 px-5 lg:px-40 xl:px-52 2xl:px-72">
+      <div className="container max-w-screen-xl mx-auto">
+      <div className="w-full md:px-3.5 justify-center flex flex-col lg:flex-row">
           <main className="lg:w-4/6 xl:w-4/6 relative mt-4">
             <div className="mb-3.5 pl-2.5 bg-white rounded-md shadow-md">
               <ul className="flex flex-col md:space-x-6 rtl:space-x-reverse md:flex-row py-2 pr-3.5">
@@ -111,6 +112,8 @@ const Apps = () => {
           </aside>
         </div>
       </div>
+        
+      </main>
     </>
   );
 };

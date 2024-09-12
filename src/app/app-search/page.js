@@ -44,7 +44,8 @@ const Search = () => {
   };
   console.log(path);
   return (
-    <main className="flex min-h-screen flex-col items-center p-28">
+    <main className="flex min-h-screen flex-col  items-center justify-between p-10 md:p-28">
+            <div className="container mx-auto max-w-screen-xl">
       <div className="col-md-12 flex items-center flex-col">
         <h1 className="text-2xl  mb-2 md:mb-6 text-center">
           Search Android Apps with Fast APK Downloader
@@ -134,6 +135,7 @@ const Search = () => {
           <Android name="Games" />
         </div>
       )}
+      </div>
     </main>
   );
 };

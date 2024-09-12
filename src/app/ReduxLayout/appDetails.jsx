@@ -97,14 +97,16 @@ const AppDetails = ({ appId, name, categories }) => {
   };
   return (
     <>
+
       {appDetails && appVersions  && !loading? (
         <>
           <metadata>
             <title>{appDetails.title}</title>
           </metadata>
-          <div className="pt-20 px-4 mx-5 md:mx-16 lg:mx-16 xl:mx-20 2xl:mx-36">
-            <div className="w-full md:px-3.5 justify-center flex flex-col lg:flex-row">
-              <main className="lg:w-4/6 xl:w-4/6 relative">
+          <main className="flex min-h-screen flex-col  items-center justify-between p-10 md:p-28">
+            <div className="container mx-auto max-w-screen-xl">
+              <div className=" w-full md:px-3.5 justify-center flex flex-col lg:flex-row">
+              <div className="lg:w-4/6 xl:w-4/6 relative">
                 <div className="mt-3.5 pl-2.5 min-h-5 bg-white rounded-md shadow-md">
                   <div className="mb-1 py-2 px-3.5 text-sm font-normal">
                     <span className="text-black">
@@ -553,7 +555,7 @@ const AppDetails = ({ appId, name, categories }) => {
                     )}
                   </div>
                 </div>
-              </main>
+              </div>
               <aside className=" sm:w-auto lg:w-2/6 lg:px-3.5 ">
                 <SideBar sideappDetails={similarApps} header="SIMILAR APPS" />
                 <SideBar
@@ -561,13 +563,14 @@ const AppDetails = ({ appId, name, categories }) => {
                   header="RECENTLY UPDATED APPS"
                 />
               </aside>
+              </div>
             </div>
-          </div>
+          </main>
         </>
       ) : (
         <>
         {
-          error ? <div className="flex items-center justify-center h-screen">{error}</div>: <div className="flex items-center justify-center h-screen">
+          error ? <div className="container mx-auto max-w-screen-xl flex items-center justify-center h-screen">{error}</div>: <div className="container mx-auto max-w-screen-xl flex items-center justify-center h-screen">
           <div className="px-7 py-3 text-lg font-medium leading-none text-center text-dark-800 bg-gray-200 rounded-full animate-pulse dark:bg-blue-900 dark:text-blue-200">
             loading...
           </div>
