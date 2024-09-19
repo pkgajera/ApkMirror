@@ -105,7 +105,7 @@ const Games = () => {
             <aside className=" sm:w-auto lg:w-2/6 lg:px-3.5 ">
               <SideBar sideappDetails={recentlyUpdatedAppsAndGames} isLoading={isLoading} />
               {isAdsServe && <Ads slot={17} className={"mb-5"} />}
-              {isAdsServe && <Ads slot={18} className={""} />}
+              {/* {isAdsServe && <Ads slot={18} className={""} />} */}
             </aside>
           </div>
         </div>

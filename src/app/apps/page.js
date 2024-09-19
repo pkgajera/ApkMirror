@@ -37,7 +37,7 @@ const Apps = () => {
       <main className="lg:container flex flex-col items-center justify-between my-20 mx-5 sm:mx-0 md:mx-20 lg:mx-auto">
         {/* <main className="flex min-h-screen flex-col items-center justify-between py-72 px-5 lg:px-40 xl:px-52 2xl:px-72"> */}
         <div className="container max-w-screen-xl mx-auto">
-          {isAdsServe && <Ads slot={12} className={""} />}
+          {isAdsServe && <Ads slot={12}  className={"mb-5"}  />}
           <div className="w-full md:px-3.5 justify-center flex flex-col lg:flex-row">
             <main className="lg:w-4/6 xl:w-4/6 relative mt-4">
               <div className="mb-3.5 p-3 bg-white rounded-md shadow-md">
@@ -108,7 +108,7 @@ const Apps = () => {
                 isLoading={isLoading}
               />
               {isAdsServe && <Ads slot={13} className={"mb-4"} />}
-              {isAdsServe && <Ads slot={14} className={""} />}
+              {/* {isAdsServe && <Ads slot={14} className={""} />} */}
             </aside>
           </div>
         </div>

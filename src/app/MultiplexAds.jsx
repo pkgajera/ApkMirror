@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
 
-const Ads = ({ slot = "", className }) => {
+const MultiplexAds = ({ slot = "", className }) => {
 
   const [url, setUrl] = useState("");
   const [insSize, setInsSize] = useState({ width: 0, height: 0 });
@@ -10,7 +10,6 @@ const Ads = ({ slot = "", className }) => {
     setUrl(window.location.hostname);
   }, []);
 
-  console.log("Slot : ",slot);
 
   useEffect(() => {
     const initializeAd = () => {
@@ -41,18 +40,17 @@ const Ads = ({ slot = "", className }) => {
 
 
   return (
-    <div className={`h-auto border text-center ${className}`} style={{borderColor:"black"}}>
-       {slot}
-      <ins className="adsbygoogle"
-          style={{ "display": "block" }}
-          data-ad-client="ca-pub-8916641928046583"
-          data-ad-slot="8457249210"
-          data-ad-format="auto"
-          data-full-width-responsive="true"></ins>
+    <div>
+
+<ins class="adsbygoogle"
+     style={{ "display": "block" }}
+     data-ad-format="autorelaxed"
+     data-ad-client="ca-pub-8916641928046583"
+     data-ad-slot="9578759194"></ins>
 
      
     </div>
   );
 };
 
-export default Ads;
+export default MultiplexAds;

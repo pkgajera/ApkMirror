@@ -8,6 +8,7 @@ import LoadingComponent from "./Loading";
 import Head from "next/head";
 import NextScript from "./NextScript";
 import Ads from "./Ads";
+import MultiplexAds from "./MultiplexAds";
 
 export default function Home() {
   const [value, setValue] = useState('')
@@ -195,7 +196,7 @@ export default function Home() {
             </div>
             {isAdsServe && <Ads slot={8} className={"mb-5"} />}
             <Android name="Apps" />
-            {isAdsServe && <Ads slot={9} className={"mb-5"} />}
+            {/* {isAdsServe && <Ads slot={9} className={"mb-5"} />}np */}
             <Android name="Games" />
           </div>
         </div>

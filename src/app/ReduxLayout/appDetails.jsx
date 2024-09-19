@@ -366,7 +366,7 @@ const AppDetails = ({ appId, name, categories }) => {
                           </button>
                         </div>
                       </div>
-                      {isAdsServe && <Ads slot={21} className={"mt-5"} />}
+                      {/* {isAdsServe && <Ads slot={21} className={"mt-5"} />} */}
 
                       {/* <div className="flex mt-5 text-xl items-center justify-center bg-white rounded-md shadow-md py-5">
                   <button
