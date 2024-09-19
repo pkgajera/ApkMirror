@@ -36,7 +36,7 @@ const Navbar = () => {
               type="button"
               aria-controls="navbar-search"
               aria-expanded={isMenuOpen}
-              className="md:hidden text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5 me-1"
+              className="grid place-items-center md:hidden text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5"
               onClick={toggleMenu}
             >
               {isMenuOpen ? (
@@ -76,10 +76,11 @@ const Navbar = () => {
             </button>
           </div>
           <div
-            className={`items-center justify-between w-full md:flex md:w-auto md:order-1 ${
+            className={`w-full md:flex ml-auto md:w-auto md:order-1 ${
               isMenuOpen ? "block" : "hidden"
             }`}
             id="navbar-search"
+            onClick={toggleMenu}
           >
             {/* {showSearch && (
               <div className="relative mt-3 md:hidden">
@@ -111,7 +112,7 @@ const Navbar = () => {
               </div>
             )} */}
 
-            <ul className="flex flex-col p-4 md:p-0 mt-4 font-medium border text-transform: uppercase border-gray-100 rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
+            <ul className="flex flex-col p-4 md:p-0 mt-4 font-medium border text-transform: uppercase border-gray-100 rounded-lg bg-gray-50 md:space-x-6 lg:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
               <li>
                 <Link
                   href="/"

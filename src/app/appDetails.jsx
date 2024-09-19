@@ -96,12 +96,17 @@ const AppDetails = ({ appId, name, categories }) => {
   return (
     <>
       {appDetails && appVersions ? (
-        <div className="pt-20 px-4 mx-5 md:mx-16 lg:mx-16 xl:mx-20 2xl:mx-36">
+        <div className="lg:container flex flex-col items-center justify-between my-72 mx-5 sm:mx-0 md:my-72 md:mx-20 lg:mx-auto">
           <div className="w-full md:px-3.5 justify-center flex flex-col lg:flex-row">
             <main className="lg:w-4/6 xl:w-4/6 relative">
               <div className="mt-3.5 pl-2.5 min-h-5 bg-white rounded-md shadow-md">
-                <div className="mb-1 py-2 px-3.5 text-sm font-normal">
-                  <span className="text-black">
+                <div className="mb-1 p-3 text-sm font-normal">
+                  <p className="text-[10px] sm:text-sm">
+                    <Link href={"/"}>Home</Link>&nbsp;/&nbsp;
+                    <Link href={`/${name}`}>Android {name}</Link>&nbsp;/&nbsp;
+                    <Link href={`/${name}/${foundCategory?.category}`}>{appVersions.category}</Link>&nbsp;/ <span className="text-slate-500">{appDetails.title}</span>
+                  </p>
+                  {/* <span className="text-black">
                     <Link
                       href="/"
                       className="py-0.5 px-1 hover:bg-neutral-100"
@@ -129,7 +134,7 @@ const AppDetails = ({ appId, name, categories }) => {
                       <span className="py-0.5 px-2 text-slate-500">/</span>
                       {appDetails.title}
                     </span>
-                  </span>
+                  </span> */}
                 </div>
               </div>
               <div className="mt-3.5 ">
@@ -233,9 +238,8 @@ const AppDetails = ({ appId, name, categories }) => {
                   <div className="-mx-5 px-1.5 py-2.5 bg-neutral-100 rounded-b-md">
                     <div className=" px-4 flex justify-center ">
                       <Link
-                        href={`/${name}/appdetails/${appVersions.appId}/${
-                          selectedVersion?.versionNumber?.split(" ")[0]
-                        }#download`}
+                        href={`/${name}/appdetails/${appVersions.appId}/${selectedVersion?.versionNumber?.split(" ")[0]
+                          }#download`}
                         // target="_blank"
                         className="px-6 py-3 bg-slate-900 text-white uppercase rounded-md hover:bg-slate-700"
                         prefetch={false}
@@ -311,9 +315,8 @@ const AppDetails = ({ appId, name, categories }) => {
                                 className="md:w-4/6 text-center md:mt-10 my-4"
                               >
                                 <Link
-                                  href={`/apps/appdetails/${
-                                    appVersions.appId
-                                  }#${version.versionNumber.split(" ")[0]}`}
+                                  href={`/apps/appdetails/${appVersions.appId
+                                    }#${version.versionNumber.split(" ")[0]}`}
                                   // target="_blank"
                                   className="px-6 py-3 bg-slate-900 text-white uppercase rounded-md  hover:bg-slate-700   "
                                   prefetch={false}
@@ -344,11 +347,10 @@ const AppDetails = ({ appId, name, categories }) => {
                       <button
                         onClick={() => pagination(currentPage - 1)}
                         disabled={currentPage === 1}
-                        className={`flex-row  items-center justify-center px-5 mx-2 h-11 leading-tight rounded-s-lg text-gray-500 border border-gray-300 hover:bg-gray-100 ${
-                          currentPage === 1
+                        className={`flex-row  items-center justify-center px-5 mx-2 h-11 leading-tight rounded-s-lg text-gray-500 border border-gray-300 hover:bg-gray-100 ${currentPage === 1
                             ? "bg-gray-100 "
                             : "bg-white hover:text-gray-700"
-                        }`}
+                          }`}
                       >
                         <FontAwesomeIcon icon={faAnglesLeft} />
                       </button>
@@ -362,16 +364,15 @@ const AppDetails = ({ appId, name, categories }) => {
                             ).length / 5
                           )
                         }
-                        className={`flex-row items-center justify-center px-5 h-11 leading-tight rounded-e-lg text-gray-500  border border-gray-300 hover:bg-gray-100 ${
-                          currentPage ===
-                          Math.ceil(
-                            appVersions.versions.filter(
-                              (version) => !version.latestVersion
-                            ).length / 5
-                          )
+                        className={`flex-row items-center justify-center px-5 h-11 leading-tight rounded-e-lg text-gray-500  border border-gray-300 hover:bg-gray-100 ${currentPage ===
+                            Math.ceil(
+                              appVersions.versions.filter(
+                                (version) => !version.latestVersion
+                              ).length / 5
+                            )
                             ? "bg-gray-100 "
                             : "bg-white hover:text-gray-700"
-                        }`}
+                          }`}
                       >
                         <FontAwesomeIcon icon={faAnglesRight} />
                       </button>
@@ -528,11 +529,10 @@ const AppDetails = ({ appId, name, categories }) => {
                         {appDetails.description}
                       </p>
                       <button
-                        className={`mt-2 font-medium ${
-                          appDetails.description?.length < 400
+                        className={`mt-2 font-medium ${appDetails.description?.length < 400
                             ? "text-gray-400 hover:line-through"
                             : "text-blue-600 hover:underline dark:text-blue-500"
-                        }`}
+                          }`}
                         onClick={toggleDescription}
                         disabled={appDetails.description?.length < 400}
                       >

@@ -23,7 +23,7 @@ export default function RootLayout({ children }) {
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
         />
         <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8916641928046583"
-          crossorigin="anonymous"></script>
+          crossorigin="anonymous" data-adtest="on"></script>
 
       </head>
       <body className={inter.className}>
