@@ -39,7 +39,7 @@ const Category = ({ name, category }) => {
   return (
     // <div className="p-20 mt-5 flex">
     <>
-      <div className="lg:container flex flex-col items-center justify-between my-20 mx-5 sm:mx-0 md:mx-20 lg:mx-auto">
+      <div className="lg:container flex flex-col items-center justify-between mt-0.5 mx-5 sm:mx-0 md:mx-20 lg:mx-auto">
         <div className="container mx-auto max-w-screen-xl">
           {/* <div className="flex min-h-screen flex-col  items-center justify-between px-5 py-72 lg:px-40 xl:px-52 2xl:px-72"> */}
           {isAdsServe && <Ads slot={1} className={"mb-3"} />}
@@ -127,7 +127,7 @@ const Category = ({ name, category }) => {
               </div>
               {isAdsServe && <Ads slot={2} className={"mt-6"} />}
             </main>
-            <aside className="w-full xl:w-2/6 xl:px-2">
+            <aside className=" sidebar-container w-full xl:w-2/6 xl:px-2">
               <SideBar sideappDetails={recentlyUpdatedApps} isLoading={isLoading} />
               {isAdsServe && <Ads slot={3} className={""} />}
             </aside>

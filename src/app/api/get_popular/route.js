@@ -9,6 +9,7 @@ export const GET = async (request, res) => {
         await connectDB();
 
         const allPopularAppsGames = await AppApk.find({ isPopular: true, type: { $in: ['app', 'game'] } }).select('appId versions type');
+        console.log(allPopularAppsGames,"b")
         const appDetailsWithVersion = await Promise.all(
             allPopularAppsGames.map(async (appApk) => {
                 const app = await App.findOne({ appId: appApk.appId }).select('title icon developer scoreText');

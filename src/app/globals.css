@@ -41,3 +41,19 @@ body{
 ins.adsbygoogle.adsbygoogle-noablate:nth-child(12) {
     left: 137px !important;
 }
+.sidebar-container {
+  display: flex;
+  flex-direction: column; /* Default to column for mobile view */
+}
+
+@media (min-width: 1024px) { /* Tailwind's lg breakpoint */
+  .sidebar-container {
+    flex-direction: column; /* Maintain column direction for large screens */
+  }
+}
+
+@media (max-width: 1023px) { /* Tailwind's sm breakpoint */
+  .sidebar-container {
+    flex-direction: column-reverse; /* Reverse order on mobile screens */
+  }
+}

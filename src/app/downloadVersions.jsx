@@ -65,7 +65,7 @@ const DownloadVersions = ({ appId, versionNumber, name }) => {
     <>
       {appDetails && appVersions ? (
         <>
-          <main className="flex min-h-screen flex-col items-center justify-between py-28 px-5 lg:px-40 xl:px-52 2xl:px-72">
+          <main className="flex min-h-screen flex-col items-center justify-between pt-0 px-5 lg:px-40 xl:px-52 2xl:px-72">
             <div className="container max-w-screen-xl mx-auto">
               {isAdsServe && <Ads slot={4} className={"mb-6"} />}
               <div className=" justify-center item-center px-5 pt-5 bg-white rounded-sm shadow-md">

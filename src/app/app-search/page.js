@@ -46,7 +46,7 @@ const Search = () => {
   };
   console.log(path);
   return (
-    <main className="lg:container flex flex-col items-center justify-between my-20 mx-5 sm:mx-0 md:mx-20 lg:mx-auto">
+    <main className="lg:container flex flex-col items-center justify-between mt-0.5 mx-5 sm:mx-0 md:mx-20 lg:mx-auto">
       {/* // <main className="flex min-h-screen flex-col items-center justify-between py-72 px-5 lg:px-40 xl:px-52 2xl:px-72"> */}
       <div className="container mx-auto max-w-screen-xl">
         {isAdsServe && <Ads slot={10} className={"mb-5"} />}

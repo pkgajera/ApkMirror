@@ -41,8 +41,7 @@ const Ads = ({ slot = "", className }) => {
 
 
   return (
-    <div className={`h-auto border text-center ${className}`} style={{borderColor:"black"}}>
-       {slot}
+    <div className={className}>
       <ins className="adsbygoogle"
           style={{ "display": "block" }}
           data-ad-client="ca-pub-8916641928046583"

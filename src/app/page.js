@@ -36,7 +36,7 @@ export default function Home() {
   return (
     <>
       {/* <main className="lg:container flex flex-col items-center justify-between mx-auto"> */}
-      <main className="lg:container flex flex-col items-center justify-between mx-5 my-12 sm:mx-0 md:mx-20 lg:mx-auto">
+      <main className="lg:container flex flex-col items-center justify-between mx-5 mt-0.5 sm:mx-0 md:mx-20 lg:mx-auto">
         {/* <main className="flex min-h-screen flex-col items-center justify-between px-5 py-72 lg:px-40 xl:px-52 2xl:px-72"> */}
         <div className="container mx-auto">
           {isAdsServe && <Ads slot={6} className={"mb-5"} />}

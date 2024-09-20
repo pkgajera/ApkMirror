@@ -104,7 +104,7 @@ const AppDetails = ({ appId, name, categories }) => {
           <metadata>
             <title>{appDetails.title}</title>
           </metadata>
-          <main className="lg:container flex flex-col items-center justify-between my-20 mx-5 sm:mx-0 md:mx-20 lg:mx-auto">
+          <main className="lg:container flex flex-col items-center justify-between mt-0.5 mx-5 sm:mx-0 md:mx-20 lg:mx-auto">
             {/* <main className="flex min-h-screen flex-col items-center justify-between py-72 px-5 lg:px-40 xl:px-52 2xl:px-72"> */}
             <div className="container mx-auto max-w-screen-xl">
               {isAdsServe && <Ads slot={19} className={"mb-3"} />}
@@ -458,6 +458,11 @@ const AppDetails = ({ appId, name, categories }) => {
                       There is <strong>NO APK</strong> Version History
                     </h2>
                   )}
+                        {isAdsServe && (
+            <div className="block sm:hidden">
+              <Ads slot={22} className={"mb-3"} />
+            </div>
+          )}
 
                   <div className="my-5 p-5 bg-white rounded-md  shadow-md">
                     <div className="my-4 max-w-[95vw] mx-auto ">
@@ -534,11 +539,16 @@ const AppDetails = ({ appId, name, categories }) => {
                 </div>
                 <aside className=" sm:w-auto lg:w-2/6 lg:px-3.5 ">
                   <SideBar sideappDetails={similarApps} header="SIMILAR APPS" />
+                  {/* {isAdsServe && <Ads slot={22} className={"mb-3"} />} */}
+                        {isAdsServe && (
+          <div className="hidden sm:block">
+            <Ads slot={22} className={"mb-3"} />
+          </div>
+        )}
                   <SideBar
                     sideappDetails={recentlyUpdatedApps}
                     header="RECENTLY UPDATED APPS"
                   />
-                  {isAdsServe && <Ads slot={22} className={"mb-3"} />}
                 </aside>
               </div>
             </div>
