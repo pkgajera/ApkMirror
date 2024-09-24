@@ -9,7 +9,7 @@ export const GET = async (request, res) => {
         await connectDB();
 
         const allPopularAppsGames = await AppApk.find({ isPopular: true, type: { $in: ['app', 'game'] } }).select('appId versions type');
-        console.log(allPopularAppsGames,"b")
+        
         const appDetailsWithVersion = await Promise.all(
             allPopularAppsGames.map(async (appApk) => {
                 const app = await App.findOne({ appId: appApk.appId }).select('title icon developer scoreText');
@@ -33,7 +33,17 @@ export const GET = async (request, res) => {
         const popularApps = filteredAppDetails.filter(app => app.type === 'app');
         const popularGames = filteredAppDetails.filter(app => app.type === 'game');
 
-        return NextResponse.json({ popularApps, popularGames }, { status: 200 });
+        const shuffleArray = (array) => {
+            return array.sort(() => 0.5 - Math.random());
+        };
+
+        const shuffledApps = shuffleArray(popularApps);
+        const shuffledGames = shuffleArray(popularGames);
+
+        const randomApps = shuffledApps.slice(0, 9);
+        const randomGames = shuffledGames.slice(0, 9);
+
+        return NextResponse.json({ popularApps: randomApps, popularGames: randomGames }, { status: 200 });
     } catch (error) {
         return NextResponse.json(
             { message: "Error fetching popualr apps and games", error },
