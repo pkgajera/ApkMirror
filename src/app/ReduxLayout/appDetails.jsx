@@ -114,7 +114,7 @@ const AppDetails = ({ appId, name, categories }) => {
                     <div className="mb-1 p-3 text-sm font-normal">
                       <p className="text-[10px] sm:text-sm">
                         <Link href={"/"}>Home</Link>&nbsp;/&nbsp;
-                        <Link href={`${name}`}>Android {name}</Link>&nbsp;/&nbsp;
+                        <Link href={`${name}`}> {name}</Link>&nbsp;/&nbsp;
                         <Link href={`/${name}/${foundCategory?.category}`}>{appVersions.category}</Link>&nbsp;/ <span className="text-slate-500">{appDetails.title}</span>
                       </p>
                     </div>

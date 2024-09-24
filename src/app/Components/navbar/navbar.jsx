@@ -28,7 +28,7 @@ const Navbar = () => {
             className="flex items-center space-x-3 rtl:space-x-reverse"
           >
             <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
-              APKExplorer
+             AppStoreSpy
             </span>
           </Link>
           <div className="flex md:order-2">
@@ -121,7 +121,7 @@ const Navbar = () => {
                  `}
                   aria-current="page"
                 >
-                  Home
+                  Dashboard
                 </Link>
               </li>
               <li>
@@ -131,7 +131,7 @@ const Navbar = () => {
                      ${pathName.includes("/apps") && "md:text-blue-700 focus:ring-violet-300 decoration-blue-700"}
                   `}
                 >
-                  Android Apps
+                  Apps
                 </Link>
               </li>
               <li>
@@ -141,7 +141,7 @@ const Navbar = () => {
                     pathName.includes("/games") && "md:text-blue-700 decoration-blue-700"
                   }`}
                 >
-                  Android Games
+                  Games
                 </Link>
               </li>
               <li>

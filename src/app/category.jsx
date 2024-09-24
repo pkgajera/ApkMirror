@@ -48,7 +48,7 @@ const Category = ({ name, category }) => {
               <div className="mb-3.5 p-3 bg-white rounded-md shadow-md">
                 <p className="text-[10px] sm:text-sm">
                   <Link href={"/"}>Home</Link>&nbsp;/&nbsp;
-                  <Link href={`${name}`}>Android {name}</Link>&nbsp;/&nbsp;
+                  <Link href={`${name}`}> {name}</Link>&nbsp;/&nbsp;
                   <span className="text-slate-500">{category}</span>
                 </p>
                 {/* <ul className="flex flex-col md:space-x-6 rtl:space-x-reverse md:flex-row py-2 pr-3.5">
@@ -67,7 +67,7 @@ const Category = ({ name, category }) => {
               </div>
               <div className="mb-3.5 p-5 bg-white rounded-lg shadow-md flex flex-col">
                 <h2 className="mb-2.5 text-base font-normal text-slate-500 uppercase tracking-wider">
-                  {category} ANDROID {name}
+                  {category}  {name}
                 </h2>
                 {isLoading ? <LoadingComponent length={6} /> : <div>
                   {categoryApps && categoryApps.length > 0 ? (

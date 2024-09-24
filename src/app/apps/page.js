@@ -41,13 +41,13 @@ const Apps = () => {
           <div className="w-full md:px-3.5 justify-center flex flex-col lg:flex-row">
             <main className="lg:w-4/6 xl:w-4/6 relative mt-4">
               <div className="mb-3.5 p-3 bg-white rounded-md shadow-md">
-                <p><Link href={"/"}>Home</Link> / <span className="text-slate-500">Android Apps</span></p>
+                <p><Link href={"/"}>Home</Link> / <span className="text-slate-500"> Apps</span></p>
               </div>
               <Android name="Apps" />
               {isAdsServe && <Ads slot={26} className={"mb-3"} />}
               <div className="p-5 bg-white rounded-md shadow-lg mb-5">
                 <h1 className="uppercase mb-2.5 text-lg font-normal tracking text-gray-600">
-                  Android Apps
+                Top  Apps
                 </h1>
                 {isLoading ? (
                   <LoadingComponent length={6} />

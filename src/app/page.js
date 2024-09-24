@@ -40,7 +40,7 @@ export default function Home() {
         {/* <main className="flex min-h-screen flex-col items-center justify-between px-5 py-72 lg:px-40 xl:px-52 2xl:px-72"> */}
         <div className="container mx-auto">
           {isAdsServe && <Ads slot={6} className={"mb-5"} />}
-          <div className="flex flex-col mb-8">
+          {/* <div className="flex flex-col mb-8">
             <h1 className="text-2xl md:text-4xl font-bold mb-2 md:mb-6 text-center">
               Welcome to APKExplorer
             </h1>
@@ -58,7 +58,7 @@ export default function Home() {
                 type="text"
                 name="search"
                 className="w-full sm:w-96 p-3 text-black border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500  dark:border-gray-600 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                // value=""
+              
                 value={value}
                 onChange={(e) => setValue(e.target.value)}
                 required
@@ -68,19 +68,15 @@ export default function Home() {
                 href={`/app-search#${value}`}
                 className="w-full sm:w-auto px-6 py-3 text-center bg-slate-900 text-white rounded-lg hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-500"
               >
-                {/* <button
-                  type="submit"
-                // className="px-6 py-3 bg-slate-900 text-white uppercase rounded-lg hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-500 w-full md:w-auto"
-            > */}
+               
                 Search Apps
-                {/* </button> */}
               </Link>
             </form>
-          </div>
-          <div>
+          </div> */}
+          <div className="mt-5">
             <div className="p-5 bg-white rounded-md shadow-lg mb-5">
               <h1 className="uppercase mb-2.5 text-lg font-normal tracking text-gray-600">
-                Popular Apps
+              Trending Apps
               </h1>
               {isLoading ? (
                 <LoadingComponent length={6} lg={3} />
@@ -138,7 +134,7 @@ export default function Home() {
             {isAdsServe && <Ads slot={7} className={"mb-5"} />}
             <div className="p-5 bg-white rounded-md shadow-lg mb-5">
               <h1 className="uppercase mb-2.5 text-lg font-normal tracking text-gray-600">
-                Popular Games
+              Trending Games 
               </h1>
               {isLoading ? (
                 <LoadingComponent length={6} lg={3} />

@@ -7,11 +7,11 @@ const Android = ({ name }) => {
   return (
     <div className="mb-3.5 p-5 bg-white rounded-md shadow-md flex flex-col">
       <h2 className="mb-2.5 text-base font-normal text-slate-500 uppercase tracking-wider">
-        Android {name} Categories
+        {name} Categories
       </h2>
       <div className="block">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 ">
-          {categories.map((data, index) => (
+          {categories.slice().reverse().map((data, index) => (
             <Link
               key={index}
               className="max-w-52 max-h-12 p-1 text-sm font-normal relative float-left rounded-md hover:bg-gray-100"
