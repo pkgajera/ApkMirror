@@ -9,9 +9,9 @@ import { ReduxProvider } from "./ReduxLayout/layout";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
-  title: "APKExplorer - Fast Android APK Downloader",
+  title: "AppStoreSpy - Fast APK Downloader",
   description:
-    "APKExplorer is your go-to source for downloading Android APKs quickly and securely. Discover a vast library of apps, explore different versions, and stay updated with the latest releases.",
+    "AppStoreSpy is your go-to source for downloading  APKs quickly and securely. Discover a vast library of apps, explore different versions, and stay updated with the latest releases.",
 };
 
 export default function RootLayout({ children }) {

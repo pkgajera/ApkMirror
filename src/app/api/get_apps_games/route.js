@@ -3,6 +3,8 @@ import App from "@/app/database/appData";
 import AppApk from "@/app/database/appApk";
 import connectDB from "@/app/database/mongoose";
 
+export const revalidate = 60; // Cache for 1 minute
+
 export const GET = async (request, res) => {
   const url = new URL(request.url);
   const type = url.searchParams.get("type");
@@ -13,9 +15,9 @@ export const GET = async (request, res) => {
   try {
     await connectDB();
 
-    const getAndroidAppsAndGames = await AppApk.find({ type, isPopular: { $ne: true } });
+    const getAndroidAppsAndGames = await AppApk.find({ type, isPopular: { $ne: true }, isGoogleApp: { $ne: true },  });
 
-    const recentlyUpdated = await AppApk.find({ type, recentlyUpdated: { $ne: true } }).limit(6).select('appId versions type');
+    const recentlyUpdated = await AppApk.find({ type, recentlyUpdated: { $ne: true }, isGoogleApp: { $ne: true },  }).limit(6).select('appId versions type');
 
     const fetchAppDetailsWithVersion = async (appApk) => {
       const app = await App.findOne({ appId: appApk.appId }).select('title icon developer scoreText');
@@ -50,7 +52,7 @@ export const GET = async (request, res) => {
       recentlyUpdatedAppsAndGames
     };
 
-    return NextResponse.json(responseData, { status: 200 });
+    return NextResponse.json(responseData, { status: 200 , headers: { 'Cache-Control': 'no-store' }});
   } catch (error) {
     return NextResponse.json(
       { message: "Error fetching get apps details", error },
