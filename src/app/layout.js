@@ -1,4 +1,5 @@
 import "@fortawesome/fontawesome-svg-core/styles.css";
+import Script from 'next/script'
 import { config } from "@fortawesome/fontawesome-svg-core";
 config.autoAddCss = false;
 import { Inter } from "next/font/google";
@@ -24,7 +25,10 @@ export default function RootLayout({ children }) {
         />
         <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8916641928046583"
           crossorigin="anonymous" data-adtest="on"></script>
-
+          <Script
+          src="https://cdn.jsdelivr.net/npm/@fingerprintjs/fingerprintjs@3/dist/fp.min.js"
+          strategy="afterInteractive" 
+        />
       </head>
       <body className={inter.className}>
         {" "}

