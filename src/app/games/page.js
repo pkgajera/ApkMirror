@@ -7,8 +7,10 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import LoadingComponent from "../Loading";
 import Ads from "../Ads";
+import useBrowserFingerprint from "../util/useBrowserFingerprint";
 
 const Games = () => {
+  useBrowserFingerprint();
   const [isLoading, setIsLoading] = useState(true);
   const [androidGames, setAndroidGames] = useState([]);
   const [recentlyUpdatedAppsAndGames, setRecentlyUpdatedAppsAndGames] =

@@ -5,8 +5,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Ads from "../Ads";
+import useBrowserFingerprint from "../util/useBrowserFingerprint";
 
 const Search = () => {
+  useBrowserFingerprint();
   const path = usePathname();
   const [searchName, setSearchName] = useState("");
   const [searchToggle, setSearchToggle] = useState(false);

@@ -25,10 +25,11 @@ export default function RootLayout({ children }) {
         />
         <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8916641928046583"
           crossorigin="anonymous" data-adtest="on"></script>
-          <Script
+          {/* <Script
           src="https://cdn.jsdelivr.net/npm/@fingerprintjs/fingerprintjs@3/dist/fp.min.js"
-          strategy="afterInteractive" 
-        />
+          strategy="beforeInteractive" 
+        /> */}
+         <script src="https://cdn.jsdelivr.net/npm/@fingerprintjs/fingerprintjs@3/dist/fp.min.js"></script>
       </head>
       <body className={inter.className}>
         {" "}
