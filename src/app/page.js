@@ -35,9 +35,7 @@ useEffect(() => {
   }, []);
   return (
     <>
-      {/* <main className="lg:container flex flex-col items-center justify-between mx-auto"> */}
       <main className="lg:container flex flex-col items-center justify-between mx-5 mt-0.5 sm:mx-0 md:mx-20 lg:mx-auto">
-        {/* <main className="flex min-h-screen flex-col items-center justify-between px-5 py-72 lg:px-40 xl:px-52 2xl:px-72"> */}
         <div className="container mx-auto">
           {isAdsServe && <Ads slot={6} className={"mb-5"} />}
           <div className="flex flex-col mb-8">
@@ -58,7 +56,6 @@ useEffect(() => {
                 type="text"
                 name="search"
                 className="w-full sm:w-96 p-3 text-black border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500  dark:border-gray-600 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                // value=""
                 value={value}
                 onChange={(e) => setValue(e.target.value)}
                 required
@@ -68,12 +65,7 @@ useEffect(() => {
                 href={`/app-search#${value}`}
                 className="w-full sm:w-auto px-6 py-3 text-center bg-slate-900 text-white rounded-lg hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-500"
               >
-                {/* <button
-                  type="submit"
-                // className="px-6 py-3 bg-slate-900 text-white uppercase rounded-lg hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-500 w-full md:w-auto"
-            > */}
                 Search Apps
-                {/* </button> */}
               </Link>
             </form>
           </div>

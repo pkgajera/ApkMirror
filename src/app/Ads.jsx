@@ -10,7 +10,6 @@ const Ads = ({ slot = "", className }) => {
     setUrl(window.location.hostname);
   }, []);
 
-  console.log("Slot : ",slot);
 
   useEffect(() => {
     const initializeAd = () => {
