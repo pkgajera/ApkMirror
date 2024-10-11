@@ -13,6 +13,7 @@ import Image from "next/image";
 import SideBar from "./SideBar";
 import { useDispatch, useSelector } from "react-redux";
 import { getAppDetails } from "./redux/features/appSlice";
+import SkeletonDetails from "./SkeletonDetails";
 
 const AppDetails = ({ appId, name, categories }) => {
   const [openIndex, setOpenIndex] = useState(null);
@@ -545,19 +546,12 @@ const AppDetails = ({ appId, name, categories }) => {
             </main>
             <aside className=" sm:w-auto lg:w-2/6 lg:px-3.5 ">
               <SideBar sideappDetails={similarApps} header="SIMILAR APPS" />
-              <SideBar
-                sideappDetails={recentlyUpdatedApps}
-                header="RECENTLY UPDATED APPS"
-              />
+              <SideBar sideappDetails={recentlyUpdatedApps} header="RECENTLY UPDATED APPS" />
             </aside>
           </div>
         </div>
       ) : (
-        <div className="flex items-center justify-center h-screen">
-          <div className="px-7 py-3 text-lg font-medium leading-none text-center text-dark-800 bg-gray-200 rounded-full animate-pulse dark:bg-blue-900 dark:text-blue-200">
-            loading...
-          </div>
-        </div>
+        <SkeletonDetails/>
       )}
     </>
   );

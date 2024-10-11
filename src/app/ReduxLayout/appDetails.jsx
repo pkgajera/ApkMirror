@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState ,useRef} from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faAnglesDown,
@@ -14,18 +14,54 @@ import { useDispatch, useSelector } from "react-redux";
 import SideBar from "../SideBar";
 import { getAppDetails } from "../redux/features/appSlice";
 import Ads from "../Ads";
+import SkeletonDetails from "../SkeletonDetails";
 
 const AppDetails = ({ appId, name, categories }) => {
   const [openIndex, setOpenIndex] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedVersion, setSelectedVersion] = useState({});
+  const [activeIndex, setActiveIndex] = useState(0);
   const [foundCategory, setFoundCategory] = useState(null);
-  const isAdsServe = JSON.parse(process.env.NEXT_PUBLIC_SERVE_ADS);
-  const dispatch = useDispatch();
+  const [contentHeight, setContentHeight] = useState("90px");
+  const [isExpanded, setIsExpanded] = useState(false);
   const { loading, error } = useSelector((state) => state.app);
+  const MAX_LENGTH = 900;
+  const isAdsServe = JSON.parse(process.env.NEXT_PUBLIC_SERVE_ADS);
+  const contentRef = useRef(null);
+  const dispatch = useDispatch();
+
   const appDetails = useSelector(
     (state) => state.app.appDetail.app?.appDetails
   );
+
+  const combinedScreenshots = [
+    appDetails?.headerImage, 
+    appDetails?.video,
+    ...(Array.isArray(appDetails?.screenshots) ? appDetails.screenshots : []),
+  ].filter(Boolean); 
+  
+  const handlePrev = () => {
+    setActiveIndex((prevIndex) =>
+      prevIndex === 0 ? combinedScreenshots.length - 1 : prevIndex - 1
+    );
+  };
+  useEffect(() => {
+    if (contentRef.current) {
+      setContentHeight(isExpanded ? `${contentRef.current.scrollHeight}px` : "90px");
+    }
+  }, [isExpanded]);
+
+  const handleNext = () => {
+    setActiveIndex((prevIndex) =>
+      prevIndex === combinedScreenshots.length - 1 ? 0 : prevIndex + 1
+    );
+  };
+  const toggleContent = () => {
+    setIsExpanded(!isExpanded);
+  };
+
+  const contentLength = appDetails?.description.length;
+  const shouldShowLess = contentLength > MAX_LENGTH;
 
   const appVersions = useSelector(
     (state) => state.app.appDetail.app?.appVersions
@@ -66,10 +102,6 @@ const AppDetails = ({ appId, name, categories }) => {
     setOpenIndex(null);
   };
 
-  const [showFullDescription, setShowFullDescription] = useState(false);
-  const toggleDescription = () => {
-    setShowFullDescription(!showFullDescription);
-  };
   const handleVersionDownload = (version) => {
     setSelectedVersion(version);
     setOpenIndex(null);
@@ -105,7 +137,6 @@ const AppDetails = ({ appId, name, categories }) => {
             <title>{appDetails.title}</title>
           </metadata>
           <main className="lg:container flex flex-col items-center justify-between mt-0.5 mx-5 sm:mx-0 md:mx-20 lg:mx-auto">
-            {/* <main className="flex min-h-screen flex-col items-center justify-between py-72 px-5 lg:px-40 xl:px-52 2xl:px-72"> */}
             <div className="container mx-auto max-w-screen-xl">
               {isAdsServe && <Ads slot={19} className={"mb-3"} />}
               <div className=" w-full md:px-3.5 justify-center flex flex-col lg:flex-row">
@@ -157,12 +188,6 @@ const AppDetails = ({ appId, name, categories }) => {
                           </div>
                         </div>
                         <div className="w-full md:w-4/6 flex justify-center items-center">
-                          {/* <p className="flex flex-wrap items-center justify-start gap-1">
-                            <span className="text-slate-400 uppercase text-[10px] sm:text-[12px]">Current Version</span><span className="text-xs sm:text-sm">{selectedVersion?.versionNumber}</span>
-                          </p>
-                          <p className="flex flex-wrap items-center justify-start gap-1">
-                            <span className="text-slate-400 uppercase text-[10px] sm:text-[12px]">date published</span><span className="text-xs sm:text-sm">{selectedVersion?.updated}</span>
-                          </p> */}
                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-1 gap-y-1 sm:gap-y-1">
                             <div className="uppercase text-[10px] sm:text-sm text-center text-slate-400 sm:text-right truncate">
                               CURRENT VERSION
@@ -366,185 +391,126 @@ const AppDetails = ({ appId, name, categories }) => {
                           </button>
                         </div>
                       </div>
-                      {/* {isAdsServe && <Ads slot={21} className={"mt-5"} />} */}
-
-                      {/* <div className="flex mt-5 text-xl items-center justify-center bg-white rounded-md shadow-md py-5">
-                  <button
-                    onClick={() => pagination(currentPage - 1)}
-                    disabled={currentPage === 1}
-                    className={`flex-row  items-center justify-center px-3 h-11 leading-tight rounded-s-lg text-gray-500 border border-gray-300 hover:bg-gray-100 ${
-                      currentPage === 1
-                        ? "bg-gray-100 "
-                        : "bg-white hover:text-gray-700"
-                    }`}
-                  >
-                    Previous
-                  </button>
-                  <div>
-                    {Array.from(
-                      {
-                        length: Math.ceil(
-                          appVersions.versions.filter(
-                            (version) => !version.latestVersion
-                          ).length / 5
-                        ),
-                      },
-                      (_, i) => {
-                        const numPages = Math.ceil(
-                          appVersions.versions.filter(
-                            (version) => !version.latestVersion
-                          ).length / 5
-                        );
-                        const startPage = Math.max(1, currentPage - 2);
-                        const endPage = Math.min(numPages, currentPage + 2);
-
-                        if (
-                          i === 0 ||
-                          i === numPages - 1 ||
-                          (i + 0 >= startPage && i + 2 <= endPage)
-                        ) {
-                          return (
-                            <button
-                              key={i}
-                              onClick={() => pagination(i + 1)}
-                              disabled={currentPage === i + 1}
-                              className={`flex-row items-center justify-center px-3 h-11 leading-tight text-gray-500 border border-gray-300 hover:bg-gray-100 hover:text-gray-700 ${
-                                currentPage === i + 1
-                                  ? "bg-gray-100"
-                                  : "bg-white"
-                              }`}
-                            >
-                              {i + 1}
-                            </button>
-                          );
-                        } else if (i === 1 || i === numPages - 2) {
-                          return (
-                            <span className="p-2" key={i}>
-                              ...
-                            </span>
-                          );
-                        }
-                      }
-                    )}
-                  </div>
-
-                  <button
-                    onClick={() => pagination(currentPage + 1)}
-                    disabled={
-                      currentPage ===
-                      Math.ceil(
-                        appVersions.versions.filter(
-                          (version) => !version.latestVersion
-                        ).length / 5
-                      )
-                    }
-                    className={`flex-row items-center justify-center px-3 h-11 leading-tight rounded-e-lg text-gray-500  border border-gray-300 hover:bg-gray-100 ${
-                      currentPage ===
-                      Math.ceil(
-                        appVersions.versions.filter(
-                          (version) => !version.latestVersion
-                        ).length / 5
-                      )
-                        ? "bg-gray-100 "
-                        : "bg-white hover:text-gray-700"
-                    }`}
-                  >
-                    Next
-                  </button>
-                </div> */}
                     </div>
                   ) : (
                     <h2 className="mt-7 text-xl font-normal">
                       There is <strong>NO APK</strong> Version History
                     </h2>
                   )}
-                        {isAdsServe && (
-            <div className="block sm:hidden">
-              <Ads slot={22} className={"mb-3"} />
-            </div>
-          )}
+                  {isAdsServe && (
+                    <div className="block sm:hidden">
+                      <Ads slot={22} className={"mb-3"} />
+                    </div>
+                  )}
 
-                  <div className="my-5 p-5 bg-white rounded-md  shadow-md">
-                    <div className="my-4 max-w-[95vw] mx-auto ">
-                      <div className="relative">
-                        <div className="h-500 snap-x overflow-x-auto whitespace-nowrap w-full flex">
-                          <Image
-                            width={288}
-                            height={0}
-                            className=" object-contain px-2 bg-gray-100"
-                            src={appDetails.headerImage}
-                            alt={`${appDetails.title}`}
-                          />
-                          {appDetails.video && (
-                            <div className="p-2 rounded-2xl shadow-lg relative mr-2.5 inline-block  contents">
-                              <iframe
-                                className="object-contain w-72 py-2 bg-gray-100"
-                                src={appDetails.video}
-                                title="YouTube video"
-                              />
-                            </div>
-                          )}
-                          {appDetails.screenshots?.map((url, index) => (
+                  <div className="my-5 p-5 bg-white rounded-md shadow-md">
+                    <h2 className="mb-2.5 text-base font-normal text-slate-500 uppercase tracking-wider">
+                      {appDetails.title} screenShots
+                    </h2>
+                    <div id="indicators-carousel" className="relative w-full">
+                      <div className="relative h-56 overflow-hidden rounded-lg md:h-96">
+                        <div className="flex transition-transform duration-700 ease-in-out" style={{ transform: `translateX(-${activeIndex * 100}%)` }}>
+
+                          {combinedScreenshots.map((item, index) => (
                             <div
                               key={index}
-                              className="p-2 rounded-2xl shadow-lg relative mr-2.5 inline-block contents"
+                              className="w-full flex-shrink-0"
+                              data-carousel-item={index === activeIndex ? "active" : ""}
                             >
-                              <Image
-                                width={288}
-                                height={0}
-                                className="px-1 ml-px snap-center object-contain py-1 bg-gray-200"
-                                src={url}
-                                alt={`Image ${index}`}
-                              />
+                              {item === appDetails.video ? (
+                                <iframe
+                                  className="object-contain w-full h-full py-2 bg-gray-100"
+                                  src={item}
+                                  title="YouTube video"
+                                />
+                              ) : (
+                                <Image
+                              className="rounded-sm block w-full"
+                              src={item}
+                              alt={`Slide ${index + 1}`}
+                              width={176}
+                              height={176}
+                              priority={true}
+                            />
+                              )}
                             </div>
                           ))}
                         </div>
                       </div>
+
+                      <div className="absolute z-5 flex -translate-x-1/2 space-x-3 bottom-5 left-1/2">
+                        {combinedScreenshots.map((_, index) => (
+                          <button
+                            key={index}
+                            onClick={() => setActiveIndex(index)}
+                            className={`w-3 h-3 rounded-full ${index === activeIndex ? "bg-slate-900" : "bg-slate-400"
+                              }`}
+                            aria-label={`Slide ${index + 1}`}
+                          ></button>
+                        ))}
+                      </div>
+
+                      <button
+                        onClick={handlePrev}
+                        className="absolute top-0 left-0 z-5 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none"
+                        data-carousel-prev
+                      >
+                        <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-slate-900 dark:bg-gray-800/30 group-hover:bg-slate-700 dark:group-hover:bg-gray-800/60 group-focus:ring-4 group-focus:ring-white dark:group-focus:ring-gray-800/70 group-focus:outline-none">
+                          <i className="fa-solid text-white fa-chevron-left" />
+                        </span>
+                      </button>
+
+                      <button
+                        onClick={handleNext}
+                        className="absolute top-0 right-0 z-5 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none"
+                        data-carousel-next
+                      >
+                        <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-slate-900 dark:bg-gray-800/30 group-hover:bg-slate-700 dark:group-hover:bg-gray-800/60 group-focus:ring-4 group-focus:ring-white dark:group-focus:ring-gray-800/70 group-focus:outline-none">
+                          <i className="fa-solid text-white fa-chevron-right" />
+                        </span>
+                      </button>
                     </div>
-                    <div className="-mx-5 px-1.5 py-2.5 bg-neutral-100 text-center font-semibold">
-                      <h2>DESCRIPTION</h2>
-                    </div>
-                    <div className="p-2 description-container max-w-full overflow-x-auto ">
-                      {showFullDescription ? (
-                        <div className="max-h-full transition-all duration-500 ease-in-out">
+                  </div>
+                  <div className="my-5 p-5 bg-white rounded-md shadow-md">
+                        <h2 className="mb-2.5 text-base font-normal text-slate-500 uppercase tracking-wider">
+                          Overview of {appDetails?.title}
+                        </h2>
+                        <div
+                          ref={contentRef}
+                          style={{
+                            maxHeight: contentHeight,
+                            overflow: "hidden",
+                          }}
+                          className="transition-max-height duration-500 ease-in-out"
+                        >
                           <p className="whitespace-pre-wrap">
                             {appDetails.description}
                           </p>
-                          <button
-                            className="mt-2 font-medium text-blue-600 hover:underline dark:text-blue-500"
-                            onClick={() => setShowFullDescription(false)}
-                          >
-                            Hide
-                          </button>
                         </div>
-                      ) : (
-                        <div>
-                          <p className="line-clamp-3 whitespace-pre-wrap">
-                            {appDetails.description}
-                          </p>
+
+                        {shouldShowLess && (
                           <button
-                            className={`mt-2 font-medium ${appDetails.description?.length < 400
-                              ? "text-gray-400 hover:line-through"
-                              : "text-blue-600 hover:underline dark:text-blue-500"
-                              }`}
-                            onClick={toggleDescription}
-                            disabled={appDetails.description?.length < 400}
+                            onClick={toggleContent}
+                            className="flex justify-center align-center w-full text-white font-medium text-sm mt-2"
                           >
-                            Read More...
+                            <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-slate-900 hover:bg-slate-600 dark:bg-gray-800/30 group-hover:bg-slate-600 dark:group-hover:bg-gray-800/60 group-focus:ring-4 group-focus:ring-white dark:group-focus:ring-gray-800/70 group-focus:outline-none">
+                              {isExpanded ? (
+                                <i className="fa-solid fa-angle-up" />
+                              ) : (
+                                <i className="fa-solid fa-angle-down" />
+                              )}
+                            </span>
                           </button>
-                        </div>
-                      )}
-                    </div>
-                  </div>
+                        )}
+                      </div>
                 </div>
                 <aside className=" sm:w-auto lg:w-2/6 lg:px-3.5 ">
                   <SideBar sideappDetails={similarApps} header="SIMILAR APPS" />
-                  {/* {isAdsServe && <Ads slot={22} className={"mb-3"} />} */}
-                        {isAdsServe && (
-          <div className="hidden sm:block">
-            <Ads slot={22} className={"mb-3"} />
-          </div>
-        )}
+                  {isAdsServe && (
+                    <div className="hidden sm:block">
+                      <Ads slot={22} className={"mb-3"} />
+                    </div>
+                  )}
                   <SideBar
                     sideappDetails={recentlyUpdatedApps}
                     header="RECENTLY UPDATED APPS"
@@ -557,11 +523,7 @@ const AppDetails = ({ appId, name, categories }) => {
       ) : (
         <>
           {
-            error ? <div className="container mx-auto max-w-screen-xl flex items-center justify-center h-screen">{error}</div> : <div className="container mx-auto max-w-screen-xl flex items-center justify-center h-screen">
-              <div className="px-7 py-3 text-lg font-medium leading-none text-center text-dark-800 bg-gray-200 rounded-full animate-pulse dark:bg-blue-900 dark:text-blue-200">
-                loading...
-              </div>
-            </div>
+            error ? <div className="container mx-auto max-w-screen-xl flex items-center justify-center h-screen">{error}</div> : <SkeletonDetails />
           }
 
         </>
