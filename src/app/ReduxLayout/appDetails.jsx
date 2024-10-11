@@ -14,6 +14,7 @@ import { useDispatch, useSelector } from "react-redux";
 import SideBar from "../SideBar";
 import { getAppDetails } from "../redux/features/appSlice";
 import Ads from "../Ads";
+import SkeletonDetails from "../SkeletonDetails";
 
 const AppDetails = ({ appId, name, categories }) => {
   const [openIndex, setOpenIndex] = useState(null);
@@ -105,7 +106,6 @@ const AppDetails = ({ appId, name, categories }) => {
             <title>{appDetails.title}</title>
           </metadata>
           <main className="lg:container flex flex-col items-center justify-between mt-0.5 mx-5 sm:mx-0 md:mx-20 lg:mx-auto">
-            {/* <main className="flex min-h-screen flex-col items-center justify-between py-72 px-5 lg:px-40 xl:px-52 2xl:px-72"> */}
             <div className="container mx-auto max-w-screen-xl">
               {isAdsServe && <Ads slot={19} className={"mb-3"} />}
               <div className=" w-full md:px-3.5 justify-center flex flex-col lg:flex-row">
@@ -557,11 +557,8 @@ const AppDetails = ({ appId, name, categories }) => {
       ) : (
         <>
           {
-            error ? <div className="container mx-auto max-w-screen-xl flex items-center justify-center h-screen">{error}</div> : <div className="container mx-auto max-w-screen-xl flex items-center justify-center h-screen">
-              <div className="px-7 py-3 text-lg font-medium leading-none text-center text-dark-800 bg-gray-200 rounded-full animate-pulse dark:bg-blue-900 dark:text-blue-200">
-                loading...
-              </div>
-            </div>
+            error ? <div className="container mx-auto max-w-screen-xl flex items-center justify-center h-screen">{error}</div> :<SkeletonDetails/>
+         
           }
 
         </>
