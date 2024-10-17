@@ -9,8 +9,9 @@ export const GET = async (request, res) => {
 
     try {
         await connectDB();
+        const allPopularAppsGames = await AppApk.find({ isPopular: { $ne: true }, isGoogleApp: { $ne: true }, type: { $in: ['app', 'game'] } }).select('appId versions type');
 
-        const allPopularAppsGames = await AppApk.find({ isPopular: true, type: { $in: ['app', 'game'] } }).select('appId versions type');
+      
         
         const appDetailsWithVersion = await Promise.all(
             allPopularAppsGames.map(async (appApk) => {
