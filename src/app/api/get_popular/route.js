@@ -3,6 +3,8 @@ import App from "@/app/database/appData";
 import AppApk from "@/app/database/appApk";
 import connectDB from "@/app/database/mongoose";
 
+export const revalidate = 60;
+
 export const GET = async (request, res) => {
 
     try {
@@ -32,7 +34,10 @@ export const GET = async (request, res) => {
         const popularApps = filteredAppDetails.filter(app => app.type === 'app');
         const popularGames = filteredAppDetails.filter(app => app.type === 'game');
 
-        return NextResponse.json({ popularApps, popularGames }, { status: 200 });
+        return NextResponse.json(
+            { popularApps, popularGames },
+            { status: 200, headers: { 'Cache-Control': 'no-store' } }
+          );
     } catch (error) {
         return NextResponse.json(
             { message: "Error fetching popualr apps and games", error },
