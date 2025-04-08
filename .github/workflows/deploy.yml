@@ -36,7 +36,7 @@ jobs:
       - name: SSH and Restart PM2
         uses: appleboy/ssh-action@v1.0.0
         with:
-          host: ${{ secrets.HOST }}
+          host: ${{ secrets.SERVER_IP  }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
