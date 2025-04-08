@@ -1,11 +1,9 @@
+# .github/workflows/deploy.yml
 name: Deploy to Linux Server
 
 on:
   push:
-    branches:
-     # Pushing to the `main` branch
-     # will trigger our workflow
-     - test_apk  # Trigger when code is pushed to main
+    branches: [test_apk]
 
 jobs:
   deploy:
@@ -15,15 +13,26 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Deploy via SSH
-        uses: appleboy/ssh-action@v1.0.0
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          script: |
-            cd /var/www/CI_CD_Demo/
-            git pull origin test_apk
+      - name: Setup SSH Key
+        run: |
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > deploy_key
+          chmod 600 deploy_key
+          mkdir -p ~/.ssh
+          ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
+
+      - name: Rsync Project to Server
+        run: |
+          rsync -avz -e "ssh -i deploy_key -o StrictHostKeyChecking=no" \
+          ./ ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}:${{ secrets.APP_DIR }}
+
+      - name: Start/Restart App (optional)
+        run: |
+          ssh -i deploy_key -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} <<EOF
+            cd ${{ secrets.APP_DIR }}
             npm install
-            npm run build
-            pm2 restart CI_CD_Demo
+            pm2 restart ${{ secrets.PM2_APP_NAME }} || pm2 start npm --name "${{ secrets.PM2_APP_NAME }}" -- start
+            pm2 save
+          EOF
+
+      - name: Cleanup
+        run: rm -f deploy_key
