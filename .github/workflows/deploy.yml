@@ -1,38 +1,46 @@
-# .github/workflows/deploy.yml
-name: Deploy to Linux Server
+name: Deploy Next.js to Linux Server
 
 on:
   push:
-    branches: [test_apk]
+    branches:
+      - test_apk
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-      - name: Setup SSH Key
-        run: |
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > deploy_key
-          chmod 600 deploy_key
-          mkdir -p ~/.ssh
-          ssh-keyscan -H ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
 
-      - name: Rsync Project to Server
-        run: |
-          rsync -avz -e "ssh -i deploy_key -o StrictHostKeyChecking=no" \
-          ./ ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}:${{ secrets.APP_DIR }}
+      - name: Install dependencies
+        run: npm install
 
-      - name: Start/Restart App (optional)
-        run: |
-          ssh -i deploy_key -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }} <<EOF
-            cd ${{ secrets.APP_DIR }}
-            npm install
-            pm2 restart ${{ secrets.PM2_APP_NAME }} || pm2 start npm --name "${{ secrets.PM2_APP_NAME }}" -- start
-            pm2 save
-          EOF
+      - name: Build project
+        run: npm run build
 
-      - name: Cleanup
-        run: rm -f deploy_key
+      - name: Copy files to server
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USER  }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "."
+          target: "/var/www/CI_CD_Demo"
+
+      - name: SSH and Restart PM2
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /var/www/CI_CD_Demo
+            npm install --production
+            npm run build
+            pm2 start npm --name "CI_CD_Demo" -- start || pm2 restart "CI_CD_Demo"
