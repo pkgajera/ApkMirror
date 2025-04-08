@@ -1,0 +1,29 @@
+name: Deploy to Linux Server
+
+on:
+  push:
+    branches:
+     # Pushing to the `main` branch
+     # will trigger our workflow
+     - test_apk  # Trigger when code is pushed to main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /var/www/CI_CD_Demo/
+            git pull origin test_apk
+            npm install
+            npm run build
+            pm2 restart CI_CD_Demo
